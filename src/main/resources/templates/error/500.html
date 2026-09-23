@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="error-container">
+            <div class="error-code">500</div>
+            <h2>Error interno del servidor</h2>
+            <p class="error-message">Algo salio mal. Intenta nuevamente mas tarde.</p>
+            <a th:href="@{/index}" class="btn btn-primary">Volver al inicio</a>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

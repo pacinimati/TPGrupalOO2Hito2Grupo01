@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="error-container">
+            <div class="error-code">403</div>
+            <h2>Sin permisos</h2>
+            <p class="error-message">No tenes permisos para acceder a esta pagina.</p>
+            <a th:href="@{/index}" class="btn btn-primary">Volver al inicio</a>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
