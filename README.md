@@ -9,7 +9,8 @@ Número de grupo:
 -Rodrigo Fernandez - Roi-123
 
 ## CASOS DE USO
-CASO DE USO 1: REGISTRO DE RESPONSABLE Y CREACION UNIDAD DE VENTA - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/1
+CASO DE USO 1: REGISTRO DE RESPONSABLE Y CREACION UNIDAD DE VENTA - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/1 
+PR CORRECION CASO DE USO 1: https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/3
 
 CASO DE USO 2: VER FESTIVALES CON SUS UNIDADES DE VENTA (ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/2
 
