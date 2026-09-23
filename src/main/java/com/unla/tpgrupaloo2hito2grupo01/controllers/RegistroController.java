@@ -1,8 +1,5 @@
 package com.unla.tpgrupaloo2hito2grupo01.controllers;
 
-import java.time.LocalDate;
-import java.time.Period;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.TipoUnidad;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
@@ -22,8 +20,6 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/registro/unidad")
 public class RegistroController {
-
-	private static final int EDAD_MINIMA = 18;
 
 	private final IUnidadVentaService unidadVentaService;
 	private final IFestivalService festivalService;
@@ -54,28 +50,12 @@ public class RegistroController {
 		return "redirect:/login?registrado";
 	}
 
+	// Las reglas de negocio las decide el service; acá solo se vuelcan al formulario.
+	// Si el campo ya falló la validación de formato, se conserva ese error
 	private void validarReglasDeNegocio(RegistroUnidadDTO registro, BindingResult result) {
-		if (registro.getUsuario() != null && unidadVentaService.existeUsuario(registro.getUsuario())) {
-			result.rejectValue("usuario", "duplicado", "Ese usuario ya está en uso");
-		}
-		if (registro.getCodigoUnico() != null && !result.hasFieldErrors("codigoUnico")
-				&& unidadVentaService.existeCodigoUnico(registro.getCodigoUnico())) {
-			result.rejectValue("codigoUnico", "duplicado", "Ya existe una unidad con ese código");
-		}
-		if (registro.getFechaNacimiento() != null && !result.hasFieldErrors("fechaNacimiento")
-				&& Period.between(registro.getFechaNacimiento(), LocalDate.now()).getYears() < EDAD_MINIMA) {
-			result.rejectValue("fechaNacimiento", "menor", "El responsable debe ser mayor de edad");
-		}
-		if (registro.getTipo() == TipoUnidad.FOOD_TRUCK
-				&& (registro.getPatente() == null || registro.getPatente().isBlank())) {
-			result.rejectValue("patente", "requerido", "La patente es obligatoria para un Food Truck");
-		}
-		if (registro.getTipo() == TipoUnidad.PUESTO_DESARMABLE) {
-			if (registro.getCarpasComponen() <= 0) {
-				result.rejectValue("carpasComponen", "requerido", "Indique la cantidad de carpas");
-			}
-			if (registro.getTiempoMontaje() <= 0) {
-				result.rejectValue("tiempoMontaje", "requerido", "Indique el tiempo de montaje en minutos");
+		for (ErrorCampoDTO error : unidadVentaService.validarReglasDeNegocio(registro)) {
+			if (!result.hasFieldErrors(error.campo())) {
+				result.rejectValue(error.campo(), error.codigo(), error.mensaje());
 			}
 		}
 	}

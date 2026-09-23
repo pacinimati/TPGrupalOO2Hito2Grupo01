@@ -2,14 +2,15 @@ package com.unla.tpgrupaloo2hito2grupo01.services;
 
 import java.util.List;
 
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 
 public interface IUnidadVentaService {
 
-	boolean existeUsuario(String usuario);
-
-	boolean existeCodigoUnico(String codigoUnico);
+	// Reglas de negocio del registro (duplicados, mayoría de edad, datos según el tipo de unidad).
+	// Devuelve todos los errores encontrados; lista vacía si el registro es válido
+	List<ErrorCampoDTO> validarReglasDeNegocio(RegistroUnidadDTO dto);
 
 	// Crea la unidad de venta, su responsable y el usuario (rol RESPONSABLE) con el que inicia sesión
 	void registrarConResponsable(RegistroUnidadDTO dto);
