@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.unla</groupId>
-	<artifactId>ghsicilianotfi</artifactId>
+	<artifactId>tpgrupaloo2hito2grupo01</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>ghsicilianotfi</name>
+	<name>tpgrupaloo2hito2grupo01</name>
 	<description>TFI Project on Java Spring</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -59,6 +59,11 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>me.paulschwarz</groupId>
+			<artifactId>spring-dotenv</artifactId>
+			<version>4.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Tpgrupaloo2Hito2Grupo01Application<tpgrupaloo2hito2grupo01>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.unla.tpgrupaloo2hito2grupo01.Tpgrupaloo2Hito2Grupo01Application",
+            "projectName": "tpgrupaloo2hito2grupo01",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TestBCryptPasswordEncoder<ghsicilianotfi>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.unla.tpgrupaloo2hito2grupo01.TestBCryptPasswordEncoder",
+            "projectName": "ghsicilianotfi",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Tpgrupaloo2Hito2Grupo01Application<ghsicilianotfi>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.unla.tpgrupaloo2hito2grupo01.Tpgrupaloo2Hito2Grupo01Application",
+            "projectName": "ghsicilianotfi",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
