@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <h2>Festivales</h2>
+            <p class="text-muted mb-0">Seleccioná un festival para ver sus unidades de venta.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${festivales.isEmpty()}">No hay festivales cargados.</p>
+                <div class="table-responsive" th:unless="${festivales.isEmpty()}">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Temporada</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="festival : ${festivales}">
+                                <td th:text="${festival.nombre}"></td>
+                                <td th:text="${festival.temporada}"></td>
+                                <td th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></td>
+                                <td class="text-right">
+                                    <a th:href="@{/admin/festivales/{id}/unidades(id=${festival.id})}"
+                                       class="btn btn-outline-primary btn-sm">Ver unidades de venta</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

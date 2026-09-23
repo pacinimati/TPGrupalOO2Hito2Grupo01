@@ -24,8 +24,13 @@ public class ViewRouteHelper {
 	//REGISTRO
 	public final static String REGISTRO_UNIDAD = "registro/unidad";
 
+	//ADMIN
+	public final static String ADMIN_FESTIVALES = "admin/festivales";
+	public final static String ADMIN_UNIDADES = "admin/unidades";
+
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
+	public final static String ADMIN_ROOT = "/admin/festivales";
 	public final static String DEGREE_ROOT = "/degrees/";
 	public final static String PERSON_ROOT = "/person";
 }

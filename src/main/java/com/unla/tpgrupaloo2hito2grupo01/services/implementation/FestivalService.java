@@ -1,6 +1,7 @@
 package com.unla.tpgrupaloo2hito2grupo01.services.implementation;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -20,5 +21,10 @@ public class FestivalService implements IFestivalService {
 	@Override
 	public List<Festival> getAll() {
 		return festivalRepository.findAll();
+	}
+
+	@Override
+	public Optional<Festival> findById(long id) {
+		return festivalRepository.findById(id);
 	}
 }

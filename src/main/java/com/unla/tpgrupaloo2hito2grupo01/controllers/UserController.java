@@ -1,5 +1,6 @@
 package com.unla.tpgrupaloo2hito2grupo01.controllers;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,10 @@ public class UserController {
 	}
 
 	@GetMapping("/loginsuccess")
-	public String loginCheck() {
-		return "redirect:/index";
+	public String loginCheck(Authentication authentication) {
+		// El Administrador arranca en su panel; el resto en el inicio
+		boolean esAdmin = authentication.getAuthorities().stream()
+				.anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+		return "redirect:" + (esAdmin ? ViewRouteHelper.ADMIN_ROOT : ViewRouteHelper.ROUTE);
 	}
 }

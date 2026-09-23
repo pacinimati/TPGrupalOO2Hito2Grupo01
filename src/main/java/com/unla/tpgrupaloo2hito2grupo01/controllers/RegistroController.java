@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
-import com.unla.tpgrupaloo2hito2grupo01.dtos.TipoUnidad;
+import com.unla.tpgrupaloo2hito2grupo01.entities.TipoUnidad;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
 import com.unla.tpgrupaloo2hito2grupo01.services.IFestivalService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IUnidadVentaService;

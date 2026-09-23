@@ -24,6 +24,9 @@
                     <li class="nav-item" th:if="${username == null}">
                         <a class="nav-link" th:href="@{/registro/unidad}">Registrar unidad de venta</a>
                     </li>
+                    <li class="nav-item" th:if="${esAdmin}">
+                        <a class="nav-link" th:href="@{/admin/festivales}">Festivales</a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item" th:if="${username == null}">
