@@ -52,4 +52,7 @@ public abstract class UnidadVenta {
 
 	@OneToMany(mappedBy = "unidadVenta")
 	private List<Personal> lstPersonal = new ArrayList<>();
+
+	// Cada subtipo informa qué tipo de unidad es
+	public abstract TipoUnidad getTipo();
 }

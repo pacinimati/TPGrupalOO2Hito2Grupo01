@@ -13,4 +13,9 @@ public class PuestoDesarmable extends UnidadVenta {
 
 	// En minutos
 	private int tiempoMontaje;
+
+	@Override
+	public TipoUnidad getTipo() {
+		return TipoUnidad.PUESTO_DESARMABLE;
+	}
 }

@@ -1,4 +1,4 @@
-package com.unla.tpgrupaloo2hito2grupo01.dtos;
+package com.unla.tpgrupaloo2hito2grupo01.entities;
 
 public enum TipoUnidad {
 	FOOD_TRUCK("Food Truck"),

@@ -1,12 +1,14 @@
 package com.unla.tpgrupaloo2hito2grupo01.services.implementation;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
 import com.unla.tpgrupaloo2hito2grupo01.entities.PuestoDesarmable;
@@ -86,6 +88,38 @@ public class UnidadVentaService implements IUnidadVentaService {
 
 		responsable.setUnidadVenta(unidad);
 		personalRepository.save(responsable);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<UnidadVentaDTO> getByFestival(long festivalId) {
+		return unidadVentaRepository.findByFestivalConResponsable(festivalId).stream()
+				.map(this::toDTO)
+				.toList();
+	}
+
+	private UnidadVentaDTO toDTO(UnidadVenta unidad) {
+		UnidadVentaDTO dto = new UnidadVentaDTO();
+		dto.setId(unidad.getId());
+		dto.setNombreComercial(unidad.getNombreComercial());
+		dto.setCodigoUnico(unidad.getCodigoUnico());
+		dto.setTipo(unidad.getTipo());
+		dto.setSuperficieM2(unidad.getSuperficieM2());
+		Responsable responsable = unidad.getResponsable();
+		dto.setResponsable(responsable == null ? "-" : responsable.getNombre() + " " + responsable.getApellido());
+		switch (unidad.getTipo()) {
+			case FOOD_TRUCK -> {
+				FoodTruck foodTruck = (FoodTruck) unidad;
+				dto.setPatente(foodTruck.getPatente());
+				dto.setConexionElectrica(foodTruck.isConexionElectrica());
+			}
+			case PUESTO_DESARMABLE -> {
+				PuestoDesarmable puesto = (PuestoDesarmable) unidad;
+				dto.setCarpasComponen(puesto.getCarpasComponen());
+				dto.setTiempoMontaje(puesto.getTiempoMontaje());
+			}
+		}
+		return dto;
 	}
 
 	private UnidadVenta crearUnidad(RegistroUnidadDTO dto) {
