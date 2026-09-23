@@ -14,16 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.unla.tpgrupaloo2hito2grupo01.services.implementation.UserService;
+import com.unla.tpgrupaloo2hito2grupo01.services.IUserService;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-	private final UserService userService;
+	private final IUserService userService;
 
-	public SecurityConfiguration(UserService userService) {
+	public SecurityConfiguration(IUserService userService) {
 		this.userService = userService;
 	}
 

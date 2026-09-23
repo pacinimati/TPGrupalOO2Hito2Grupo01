@@ -9,15 +9,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.unla.tpgrupaloo2hito2grupo01.entities.UserRole;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUserRepository;
+import com.unla.tpgrupaloo2hito2grupo01.services.IUserService;
 
 @Service("userService")
-public class UserService implements UserDetailsService {
+public class UserService implements IUserService {
 
 	private IUserRepository userRepository;
 
@@ -28,6 +28,9 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		com.unla.tpgrupaloo2hito2grupo01.entities.User user = userRepository.findByUsernameAndFetchUserRolesEagerly(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("Usuario no encontrado: " + username);
+		}
 		return buildUser(user, buildGrantedAuthorities(user.getUserRoles()));
 	}
 
