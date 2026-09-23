@@ -20,7 +20,7 @@ import com.unla.tpgrupaloo2hito2grupo01.services.IUnidadVentaService;
 import jakarta.validation.Valid;
 
 @Controller
-@RequestMapping("/registro")
+@RequestMapping("/registro/unidad")
 public class RegistroController {
 
 	private static final int EDAD_MINIMA = 18;
@@ -34,7 +34,7 @@ public class RegistroController {
 	}
 
 	//GET: SERVER/registro/unidad
-	@GetMapping("/unidad")
+	@GetMapping
 	public String formulario(Model model) {
 		model.addAttribute("registro", new RegistroUnidadDTO());
 		cargarOpciones(model);
@@ -42,7 +42,7 @@ public class RegistroController {
 	}
 
 	//POST: SERVER/registro/unidad
-	@PostMapping("/unidad")
+	@PostMapping
 	public String registrar(@Valid @ModelAttribute("registro") RegistroUnidadDTO registro,
 							BindingResult result, Model model) {
 		validarReglasDeNegocio(registro, result);
