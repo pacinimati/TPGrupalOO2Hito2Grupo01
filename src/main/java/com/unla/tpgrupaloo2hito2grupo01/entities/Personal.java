@@ -12,6 +12,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Getter;
@@ -48,6 +49,11 @@ public abstract class Personal {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "unidad_venta_id", nullable = true)
 	private UnidadVenta unidadVenta;
+
+	// Usuario con el que el personal inicia sesión (rol en UserRole)
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", unique = true)
+	private User user;
 
 	@PrePersist
 	@PreUpdate

@@ -7,4 +7,6 @@ import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 
 @Repository("festivalRepository")
 public interface IFestivalRepository extends JpaRepository<Festival, Long> {
+
+	boolean existsByNombre(String nombre);
 }

@@ -21,6 +21,9 @@ public class ViewRouteHelper {
 	public final static String USER_LOGIN = "user/login";
 	public final static String USER_LOGOUT = "user/logout";
 
+	//REGISTRO
+	public final static String REGISTRO_UNIDAD = "registro/unidad";
+
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
 	public final static String DEGREE_ROOT = "/degrees/";

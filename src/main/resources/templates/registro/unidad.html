@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Registrar unidad de venta</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/registro/unidad}" th:object="${registro}" method="post" novalidate>
+
+                    <h6 class="text-muted">Datos de acceso del responsable</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="usuario">Usuario *</label>
+                            <input type="text" id="usuario" th:field="*{usuario}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('usuario')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{usuario}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="contrasenia">Contraseña *</label>
+                            <input type="password" id="contrasenia" th:field="*{contrasenia}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('contrasenia')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{contrasenia}"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-3">Datos personales del responsable</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="apellido">Apellido *</label>
+                            <input type="text" id="apellido" th:field="*{apellido}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{apellido}"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="dni">DNI *</label>
+                            <input type="number" id="dni" th:field="*{dni}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{dni}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="fechaNacimiento">Fecha de nacimiento *</label>
+                            <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('fechaNacimiento')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{fechaNacimiento}"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-3">Datos de la unidad de venta</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="nombreComercial">Nombre comercial *</label>
+                            <input type="text" id="nombreComercial" th:field="*{nombreComercial}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('nombreComercial')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{nombreComercial}"></div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="superficieM2">Superficie (m²) *</label>
+                            <input type="number" step="0.01" id="superficieM2" th:field="*{superficieM2}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('superficieM2')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{superficieM2}"></div>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="codigoUnico">Código único *</label>
+                            <input type="text" id="codigoUnico" th:field="*{codigoUnico}" class="form-control"
+                                   maxlength="10" placeholder="ABC1234567"
+                                   th:classappend="${#fields.hasErrors('codigoUnico')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{codigoUnico}"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="festivalId">Festival *</label>
+                            <select id="festivalId" th:field="*{festivalId}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('festivalId')} ? 'is-invalid'">
+                                <option value="">-- Seleccionar festival --</option>
+                                <option th:each="f : ${festivales}" th:value="${f.id}" th:text="${f.nombre}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{festivalId}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="tipo">Tipo de unidad *</label>
+                            <select id="tipo" th:field="*{tipo}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                                <option value="">-- Seleccionar tipo --</option>
+                                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descripcion}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{tipo}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Food Truck -->
+                    <div id="datos-food-truck" class="form-row" style="display:none">
+                        <div class="form-group col-md-6">
+                            <label for="patente">Patente *</label>
+                            <input type="text" id="patente" th:field="*{patente}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('patente')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{patente}"></div>
+                        </div>
+                        <div class="form-group col-md-6 d-flex align-items-end">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" id="conexionElectrica" th:field="*{conexionElectrica}" class="form-check-input"/>
+                                <label for="conexionElectrica" class="form-check-label">Requiere conexión eléctrica</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Puesto Desarmable -->
+                    <div id="datos-puesto" class="form-row" style="display:none">
+                        <div class="form-group col-md-6">
+                            <label for="carpasComponen">Cantidad de carpas *</label>
+                            <input type="number" id="carpasComponen" th:field="*{carpasComponen}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('carpasComponen')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{carpasComponen}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="tiempoMontaje">Tiempo de montaje (minutos) *</label>
+                            <input type="number" id="tiempoMontaje" th:field="*{tiempoMontaje}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('tiempoMontaje')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{tiempoMontaje}"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                    <a th:href="@{/index}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+
+    <script>
+        $(document).ready(function() {
+            function mostrarSegunTipo() {
+                var tipo = $('#tipo').val();
+                $('#datos-food-truck').toggle(tipo === 'FOOD_TRUCK');
+                $('#datos-puesto').toggle(tipo === 'PUESTO_DESARMABLE');
+            }
+            $('#tipo').on('change', mostrarSegunTipo);
+            mostrarSegunTipo();
+        });
+    </script>
+</body>
+</html>

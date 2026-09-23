@@ -1,8 +1,5 @@
 package com.unla.tpgrupaloo2hito2grupo01.controllers;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,30 +9,23 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
-import com.unla.tpgrupaloo2hito2grupo01.services.IPersonService;
+import com.unla.tpgrupaloo2hito2grupo01.services.IFestivalService;
 
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
-	private final IPersonService personService;
-	
-	public HomeController(IPersonService personService) {
-		this.personService = personService;
+	private final IFestivalService festivalService;
+
+	public HomeController(IFestivalService festivalService) {
+		this.festivalService = festivalService;
 	}
 
 	//GET Example: SERVER/index
 	@GetMapping("/index")
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView(ViewRouteHelper.INDEX);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Object principal = authentication != null ? authentication.getPrincipal() : null;
-		if (principal instanceof User user) {
-			modelAndView.addObject("username", user.getUsername());
-		} else {
-			modelAndView.addObject("username", "anonymous");
-		}
-		modelAndView.addObject("persons", personService.getAll());
+		modelAndView.addObject("festivales", festivalService.getAll());
 		return modelAndView;
 	}
 

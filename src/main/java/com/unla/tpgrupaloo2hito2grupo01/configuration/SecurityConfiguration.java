@@ -35,6 +35,8 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(auth -> {
 					auth.requestMatchers("/css/*", "/imgs/*", "/js/*", "/vendor/bootstrap/css/*",
 							"/vendor/jquery/*", "/vendor/bootstrap/js/*", "/api/v1/**").permitAll();
+					// Páginas públicas: inicio con festivales y registro de unidad de venta
+					auth.requestMatchers("/", "/index", "/registro/**", "/error").permitAll();
 					auth.anyRequest().authenticated();
 				})
 				.formLogin(login -> {

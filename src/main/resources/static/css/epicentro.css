@@ -1,0 +1,349 @@
+/* Epicentro Gourmet - Sistema de Gestión */
+:root {
+    --ink: #1c1917;
+    --muted: #78716c;
+    --line: #e7e5e4;
+    --surface: #ffffff;
+    --bg: #fafaf9;
+    --accent: #ea580c;
+    --accent-hover: #c2410c;
+    --accent-soft: #fff1e6;
+    --danger: #dc2626;
+    --success: #16a34a;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(28, 25, 23, 0.05), 0 4px 16px rgba(28, 25, 23, 0.04);
+}
+
+body {
+    padding-top: 64px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+main {
+    flex: 1;
+}
+
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* Navbar */
+.navbar {
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--line);
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+    color: var(--ink) !important;
+}
+
+.navbar-brand::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.navbar .nav-link {
+    color: var(--muted) !important;
+    font-weight: 500;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar .nav-link:hover {
+    color: var(--ink) !important;
+}
+
+.navbar .dropdown-menu {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+}
+
+/* Cards */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--line);
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    padding: 1rem 1.5rem;
+    color: var(--ink);
+}
+
+.card-header h5 {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Hero */
+.hero-section {
+    background: linear-gradient(135deg, var(--accent-soft) 0%, #ffe4d1 100%);
+    border: 1px solid #fed7bd;
+    border-radius: var(--radius);
+    padding: 3.5rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.hero-section .eyebrow {
+    display: inline-block;
+    margin-bottom: .75rem;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent-hover);
+}
+
+.hero-section h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.hero-section p {
+    max-width: 520px;
+    margin: .75rem auto 1.5rem;
+    color: #57534e;
+}
+
+/* Tables */
+.table thead th {
+    border-top: none;
+    border-bottom: 1px solid var(--line);
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.table td,
+.table th {
+    padding: .85rem 1rem;
+    vertical-align: middle;
+    border-top: 1px solid var(--line);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background: transparent;
+}
+
+.table-hover tbody tr:hover {
+    background: var(--accent-soft);
+}
+
+/* Forms */
+.form-control {
+    height: auto;
+    padding: .6rem .85rem;
+    border: 1px solid #d6d3d1;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+}
+
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, .15);
+}
+
+label,
+.form-label {
+    font-size: .875rem;
+    font-weight: 500;
+    color: #44403c;
+}
+
+h6.text-muted {
+    padding-bottom: .5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    padding: .55rem 1.1rem;
+}
+
+.btn-lg {
+    padding: .75rem 1.5rem;
+}
+
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+    box-shadow: none;
+}
+
+.btn-outline-light {
+    color: var(--ink);
+    border-color: #d6d3d1;
+    background: var(--surface);
+}
+
+.btn-outline-light:hover {
+    color: var(--ink);
+    background: var(--surface);
+    border-color: var(--ink);
+}
+
+.btn-secondary {
+    background: var(--surface);
+    border-color: #d6d3d1;
+    color: var(--ink);
+}
+
+.btn-secondary:hover {
+    background: var(--bg);
+    border-color: var(--ink);
+    color: var(--ink);
+}
+
+.btn-success {
+    background: var(--success);
+    border-color: var(--success);
+}
+
+.btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-outline-primary {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Alerts */
+.alert {
+    border: none;
+    border-radius: var(--radius-sm);
+}
+
+/* Login / logout */
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+    margin-top: -64px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-card .card-body {
+    padding: 2.25rem;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.login-header h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.login-header h3::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/* Page header (páginas heredadas del bootstrap) */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* Error pages */
+.error-container {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+
+.error-code {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent);
+}
+
+.error-message {
+    color: var(--muted);
+}
+
+/* Footer */
+footer {
+    background: transparent !important;
+    border-top: 1px solid var(--line);
+    color: var(--muted) !important;
+    font-size: .875rem;
+}
