@@ -15,7 +15,6 @@ import com.unla.tpgrupaloo2hito2grupo01.repositories.IDegreeRepository;
 import com.unla.tpgrupaloo2hito2grupo01.services.IDegreeService;
 
 @Service("degreeService")
-@SuppressWarnings("unused")
 public class DegreeService implements IDegreeService {
 	private static final Logger logger = LoggerFactory.getLogger(DegreeService.class);
 

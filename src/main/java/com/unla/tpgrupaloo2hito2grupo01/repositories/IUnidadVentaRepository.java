@@ -11,4 +11,6 @@ import com.unla.tpgrupaloo2hito2grupo01.entities.UnidadVenta;
 public interface IUnidadVentaRepository extends JpaRepository<UnidadVenta, Long> {
 
 	List<UnidadVenta> findByFestivalAsistioId(long festivalId);
+
+	boolean existsByCodigoUnico(String codigoUnico);
 }

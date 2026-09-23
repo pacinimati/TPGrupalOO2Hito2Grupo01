@@ -16,7 +16,6 @@ import com.unla.tpgrupaloo2hito2grupo01.services.IPersonService;
 
 
 @Service("personService")
-@SuppressWarnings("unused")
 public class PersonService implements IPersonService {
 	private static final Logger logger = LoggerFactory.getLogger(PersonService.class);
 

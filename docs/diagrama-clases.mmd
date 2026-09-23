@@ -1,0 +1,112 @@
+classDiagram
+    direction TB
+
+    class Festival {
+        -long id
+        -String nombre
+        -String temporada
+        -LocalDate fechaInicio
+        -LocalDate fechaFin
+        -float costoPorSuperficie
+        -float costoPorMontaje
+        -float plusUsoElectricidad
+        -float sueldoBase
+        -List~UnidadVenta~ lstUnidadVenta
+    }
+
+    class Personal {
+        <<abstract>>
+        -long id
+        -String nombre
+        -String apellido
+        -int dni
+        -LocalDate fechaNacimiento
+        -LocalDate fechaIngreso
+        -float sueldoBase
+        -boolean eliminado
+        -UnidadVenta unidadVenta
+        -User user
+    }
+    class Cajero {
+        -TurnoTrabajo turnoTrabajo
+    }
+    class Cocinero {
+        -String especialidadCulinaria
+        -float plus
+    }
+    class Administrador
+    class Responsable
+    class TurnoTrabajo {
+        <<enumeration>>
+        MANIANA
+        NOCHE
+    }
+
+    class User {
+        -long id
+        -String username
+        -String password
+        -boolean enabled
+    }
+    class UserRole {
+        -long id
+        -String role
+    }
+
+    class UnidadVenta {
+        <<abstract>>
+        -long id
+        -String nombreComercial
+        -Responsable responsable
+        -float superficieM2
+        -String codigoUnico
+        -Festival festivalAsistio
+        -List~Plato~ lstPlatos
+        -List~Personal~ lstPersonal
+    }
+    class FoodTruck {
+        -String patente
+        -boolean conexionElectrica
+    }
+    class PuestoDesarmable {
+        -int carpasComponen
+        -int tiempoMontaje
+    }
+
+    class Plato {
+        -long id
+        -String nombre
+        -float precioVenta
+        -float costoProduccion
+    }
+    class Pedido {
+        -long id
+        -LocalDate fechaTransaccion
+        -UnidadVenta unidadVenta
+        -List~ItemPedido~ lstItems
+    }
+    class ItemPedido {
+        -long id
+        -Pedido pedido
+        -Plato plato
+        -int cantidad
+    }
+
+    Personal <|-- Cajero
+    Personal <|-- Cocinero
+    Personal <|-- Administrador
+    Personal <|-- Responsable
+    Cajero --> TurnoTrabajo
+    Personal "0..1" --> "1" User : user
+    UserRole "0..*" --> "1" User
+
+    UnidadVenta <|-- FoodTruck
+    UnidadVenta <|-- PuestoDesarmable
+
+    Festival "1" o-- "0..*" UnidadVenta : festivalAsistio
+    UnidadVenta "1" o-- "0..*" Personal : lstPersonal
+    UnidadVenta "0..*" --> "0..1" Responsable : responsable
+    UnidadVenta "0..*" --> "0..*" Plato : lstPlatos
+    Pedido "0..*" --> "1" UnidadVenta
+    Pedido "1" *-- "1..*" ItemPedido
+    ItemPedido "0..*" --> "1" Plato

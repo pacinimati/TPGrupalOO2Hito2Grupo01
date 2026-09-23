@@ -1,4 +1,16 @@
-# TPGrupalOO2Hito2Grupo01
+# TPGrupalOO2Hito1Grupo01
+Número de grupo: 
+01
+
+## 💻 Integrantes del grupo (nombre, apellido y usuario GitHub):
+-Matias Pacini - pacinimati
+-Alejo Almirón - alejoalmiron
+-Rodrigo Mercado - RodriMercado
+-Rodrigo Fernandez - Roi-123
+
+## CASOS DE USO
+CASO DE USO 1: REGISTRO DE RESPONSABLE Y CREACION UNIDAD DE VENTA - MATIAS PACINI
+
 
 ## Requisitos
 
