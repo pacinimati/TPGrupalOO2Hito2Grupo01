@@ -45,4 +45,15 @@ public class AdminController {
 		mAV.addObject("unidades", unidadVentaService.getByFestival(id));
 		return mAV;
 	}
+
+	//GET: SERVER/admin/festivales/{id}/ranking
+	@GetMapping("/festivales/{id}/ranking")
+	public ModelAndView ranking(@PathVariable long id) {
+		Festival festival = festivalService.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El festival no existe"));
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.ADMIN_RANKING);
+		mAV.addObject("festival", festival);
+		mAV.addObject("ranking", unidadVentaService.getRankingPorRecaudacion(id));
+		return mAV;
+	}
 }

@@ -3,6 +3,7 @@ package com.unla.tpgrupaloo2hito2grupo01.services;
 import java.util.List;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.RankingUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 
@@ -17,4 +18,8 @@ public interface IUnidadVentaService {
 
 	// Unidades de venta de un festival, ordenadas por nombre comercial
 	List<UnidadVentaDTO> getByFestival(long festivalId);
+
+	// Ranking de las unidades de un festival, de mayor a menor recaudación (suma de sus pedidos).
+	// Incluye las unidades sin pedidos, con recaudación 0
+	List<RankingUnidadDTO> getRankingPorRecaudacion(long festivalId);
 }

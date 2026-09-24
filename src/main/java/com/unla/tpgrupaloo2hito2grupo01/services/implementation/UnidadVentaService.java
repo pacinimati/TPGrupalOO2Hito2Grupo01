@@ -3,17 +3,22 @@ package com.unla.tpgrupaloo2hito2grupo01.services.implementation;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.RankingUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Pedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.PuestoDesarmable;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Responsable;
 import com.unla.tpgrupaloo2hito2grupo01.entities.TipoUnidad;
@@ -21,6 +26,7 @@ import com.unla.tpgrupaloo2hito2grupo01.entities.UnidadVenta;
 import com.unla.tpgrupaloo2hito2grupo01.entities.User;
 import com.unla.tpgrupaloo2hito2grupo01.entities.UserRole;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
+import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUnidadVentaRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUserRepository;
@@ -37,16 +43,18 @@ public class UnidadVentaService implements IUnidadVentaService {
 	private final IUnidadVentaRepository unidadVentaRepository;
 	private final IPersonalRepository personalRepository;
 	private final IFestivalRepository festivalRepository;
+	private final IPedidoRepository pedidoRepository;
 	private final IUserRepository userRepository;
 	private final IUserRoleRepository userRoleRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	public UnidadVentaService(IUnidadVentaRepository unidadVentaRepository, IPersonalRepository personalRepository,
-			IFestivalRepository festivalRepository, IUserRepository userRepository,
+			IFestivalRepository festivalRepository, IPedidoRepository pedidoRepository, IUserRepository userRepository,
 			IUserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
 		this.unidadVentaRepository = unidadVentaRepository;
 		this.personalRepository = personalRepository;
 		this.festivalRepository = festivalRepository;
+		this.pedidoRepository = pedidoRepository;
 		this.userRepository = userRepository;
 		this.userRoleRepository = userRoleRepository;
 		this.passwordEncoder = passwordEncoder;
@@ -122,6 +130,31 @@ public class UnidadVentaService implements IUnidadVentaService {
 				.toList();
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<RankingUnidadDTO> getRankingPorRecaudacion(long festivalId) {
+		// Agrupa los pedidos del festival por unidad para no consultar una vez por cada unidad
+		Map<Long, List<Pedido>> pedidosPorUnidad = pedidoRepository.findByFestivalConItems(festivalId).stream()
+				.collect(Collectors.groupingBy(p -> p.getUnidadVenta().getId()));
+
+		return unidadVentaRepository.findByFestivalConResponsable(festivalId).stream()
+				.map(unidad -> toRankingDTO(unidad, pedidosPorUnidad.getOrDefault(unidad.getId(), List.of())))
+				.sorted(Comparator.comparingDouble(RankingUnidadDTO::getRecaudacion).reversed()
+						.thenComparing(RankingUnidadDTO::getNombreComercial))
+				.toList();
+	}
+
+	private RankingUnidadDTO toRankingDTO(UnidadVenta unidad, List<Pedido> pedidos) {
+		double recaudacion = pedidos.stream().mapToDouble(Pedido::getTotal).sum();
+		return new RankingUnidadDTO(unidad.getId(), unidad.getNombreComercial(), unidad.getCodigoUnico(),
+				unidad.getTipo(), nombreResponsable(unidad), pedidos.size(), recaudacion);
+	}
+
+	private String nombreResponsable(UnidadVenta unidad) {
+		Responsable responsable = unidad.getResponsable();
+		return responsable == null ? "-" : responsable.getNombre() + " " + responsable.getApellido();
+	}
+
 	private UnidadVentaDTO toDTO(UnidadVenta unidad) {
 		UnidadVentaDTO dto = new UnidadVentaDTO();
 		dto.setId(unidad.getId());
@@ -129,8 +162,7 @@ public class UnidadVentaService implements IUnidadVentaService {
 		dto.setCodigoUnico(unidad.getCodigoUnico());
 		dto.setTipo(unidad.getTipo());
 		dto.setSuperficieM2(unidad.getSuperficieM2());
-		Responsable responsable = unidad.getResponsable();
-		dto.setResponsable(responsable == null ? "-" : responsable.getNombre() + " " + responsable.getApellido());
+		dto.setResponsable(nombreResponsable(unidad));
 		switch (unidad.getTipo()) {
 			case FOOD_TRUCK -> {
 				FoodTruck foodTruck = (FoodTruck) unidad;

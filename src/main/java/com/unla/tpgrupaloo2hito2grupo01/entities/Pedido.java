@@ -33,4 +33,9 @@ public class Pedido {
 
 	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemPedido> lstItems = new ArrayList<>();
+
+	// Total cobrado en el pedido: suma de los subtotales de sus items
+	public double getTotal() {
+		return lstItems.stream().mapToDouble(ItemPedido::getSubtotal).sum();
+	}
 }
