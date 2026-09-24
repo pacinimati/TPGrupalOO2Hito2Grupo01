@@ -7,7 +7,7 @@
     <main class="container py-4">
         <div class="page-header">
             <h2>Festivales</h2>
-            <p class="text-muted mb-0">Seleccioná un festival para ver sus unidades de venta.</p>
+            <p class="text-muted mb-0">Seleccioná un festival para ver sus unidades de venta o su ranking por recaudación.</p>
         </div>
 
         <div class="card">
@@ -33,6 +33,8 @@
                                 <td class="text-right">
                                     <a th:href="@{/admin/festivales/{id}/unidades(id=${festival.id})}"
                                        class="btn btn-outline-primary btn-sm">Ver unidades de venta</a>
+                                    <a th:href="@{/admin/festivales/{id}/ranking(id=${festival.id})}"
+                                       class="btn btn-outline-secondary btn-sm">Ranking por recaudación</a>
                                 </td>
                             </tr>
                         </tbody>

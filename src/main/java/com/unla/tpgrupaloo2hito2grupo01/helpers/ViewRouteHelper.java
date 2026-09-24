@@ -27,6 +27,7 @@ public class ViewRouteHelper {
 	//ADMIN
 	public final static String ADMIN_FESTIVALES = "admin/festivales";
 	public final static String ADMIN_UNIDADES = "admin/unidades";
+	public final static String ADMIN_RANKING = "admin/ranking";
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";

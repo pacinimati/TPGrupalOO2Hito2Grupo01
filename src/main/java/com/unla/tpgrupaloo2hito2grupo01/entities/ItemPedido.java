@@ -28,4 +28,9 @@ public class ItemPedido {
 	private Plato plato;
 
 	private int cantidad;
+
+	// Lo que se cobró por este plato: cantidad pedida por su precio de venta
+	public double getSubtotal() {
+		return cantidad * (double) plato.getPrecioVenta();
+	}
 }
