@@ -15,6 +15,7 @@ CASO DE USO 2: VER FESTIVALES CON SUS UNIDADES DE VENTA (ADMIN) - MATIAS PACINI 
 
 CASO DE USO 2: RANKING DE UNIDADES(ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/4
 
+CASO DE USO 3: ALTA DE PEDIDOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/5
 
 
 
