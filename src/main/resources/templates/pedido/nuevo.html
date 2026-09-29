@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="alert alert-success" th:if="${pedidoRegistrado != null}">
+            Pedido <strong th:text="'#' + ${pedidoRegistrado.id}"></strong> registrado para
+            <strong th:text="${pedidoRegistrado.unidadVenta}"></strong>:
+            <span th:text="${pedidoRegistrado.cantidadItems}"></span> plato(s), total
+            <strong th:text="'$ ' + ${#numbers.formatDecimal(pedidoRegistrado.total, 1, 'POINT', 2, 'COMMA')}"></strong>.
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Nuevo pedido</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${unidades.isEmpty()}">
+                    No tenés una unidad de venta asignada, por lo que no podés registrar pedidos.
+                </p>
+                <p class="text-muted mb-0" th:if="${!unidades.isEmpty() and platos.isEmpty()}">
+                    No hay platos cargados.
+                </p>
+
+                <form th:action="@{/pedidos/nuevo}" th:object="${pedido}" method="post" novalidate
+                      th:unless="${unidades.isEmpty() or platos.isEmpty()}">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            <label for="unidadVentaId">Unidad de venta *</label>
+                            <select id="unidadVentaId" th:field="*{unidadVentaId}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('unidadVentaId')} ? 'is-invalid'">
+                                <option value="" th:if="${unidades.size() > 1}">-- Seleccionar unidad de venta --</option>
+                                <option th:each="u : ${unidades}" th:value="${u.id}"
+                                        th:text="${u.nombreComercial} + ' (' + ${u.codigoUnico} + ') · ' + ${u.festival}
+                                                 + (${u.fechaInicio} != null ? ' · ' + ${#temporals.format(u.fechaInicio, 'dd/MM/yyyy')}
+                                                 + ' al ' + ${#temporals.format(u.fechaFin, 'dd/MM/yyyy')} : '')"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{unidadVentaId}"></div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="fechaTransaccion">Fecha de la transacción *</label>
+                            <input type="date" id="fechaTransaccion" th:field="*{fechaTransaccion}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('fechaTransaccion')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{fechaTransaccion}"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-3">Platos</h6>
+                    <div class="alert alert-danger py-2" th:if="${#fields.hasErrors('cantidades*')}">
+                        <div th:each="error : ${#fields.errors('cantidades*')}" th:text="${error}"></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-3">
+                            <thead>
+                                <tr>
+                                    <th>Plato</th>
+                                    <th class="text-right">Precio</th>
+                                    <th class="text-right" style="width: 9rem">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="plato : ${platos}">
+                                    <td th:text="${plato.nombre}"></td>
+                                    <td class="text-right"
+                                        th:text="'$ ' + ${#numbers.formatDecimal(plato.precioVenta, 1, 'POINT', 2, 'COMMA')}"></td>
+                                    <td>
+                                        <input type="number" min="0" step="1" placeholder="0"
+                                               class="form-control text-right cantidad"
+                                               th:field="*{cantidades[__${plato.id}__]}"
+                                               th:attr="data-precio=${plato.precioVenta}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2" class="text-right">Total</th>
+                                    <th class="text-right" id="total">$ 0,00</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Registrar pedido</button>
+                    <a th:href="@{/index}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Total orientativo mientras se completa el formulario; el que vale es el que calcula el servidor
+            function actualizarTotal() {
+                var total = 0;
+                $('.cantidad').each(function() {
+                    var cantidad = parseInt($(this).val(), 10);
+                    if (cantidad > 0) {
+                        total += cantidad * parseFloat($(this).data('precio'));
+                    }
+                });
+                $('#total').text('$ ' + total.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+            }
+            $('.cantidad').on('input', actualizarTotal);
+            actualizarTotal();
+        });
+    </script>
+</body>
+</html>

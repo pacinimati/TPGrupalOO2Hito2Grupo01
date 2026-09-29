@@ -1,6 +1,7 @@
 package com.unla.tpgrupaloo2hito2grupo01.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,7 @@ public interface IPersonalRepository extends JpaRepository<Personal, Long> {
 
 	// Personal activo (no eliminado lógicamente) de una unidad de venta
 	List<Personal> findByUnidadVentaIdAndEliminadoFalse(long unidadVentaId);
+
+	// Personal activo asociado al usuario con el que se inició sesión
+	Optional<Personal> findByUserUsernameAndEliminadoFalse(String username);
 }
