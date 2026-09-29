@@ -13,9 +13,9 @@ CASO DE USO 1: REGISTRO DE RESPONSABLE Y CREACION UNIDAD DE VENTA - MATIAS PACIN
 
 CASO DE USO 2: VER FESTIVALES CON SUS UNIDADES DE VENTA (ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/2
 
-CASO DE USO 2: RANKING DE UNIDADES(ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/4
+CASO DE USO 3: RANKING DE UNIDADES(ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/4
 
-CASO DE USO 3: ALTA DE PEDIDOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/5
+CASO DE USO 4: ALTA DE PEDIDOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/5
 
 
 
