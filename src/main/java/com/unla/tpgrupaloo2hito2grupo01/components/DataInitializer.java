@@ -12,14 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.unla.tpgrupaloo2hito2grupo01.entities.Administrador;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Plato;
 import com.unla.tpgrupaloo2hito2grupo01.entities.User;
 import com.unla.tpgrupaloo2hito2grupo01.entities.UserRole;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
+import com.unla.tpgrupaloo2hito2grupo01.repositories.IPlatoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUserRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUserRoleRepository;
 
-// Precarga los festivales y el usuario Administrador si todavía no existen
+// Precarga los festivales, los platos y el usuario Administrador si todavía no existen
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -31,6 +33,7 @@ public class DataInitializer implements CommandLineRunner {
 	private final IUserRepository userRepository;
 	private final IUserRoleRepository userRoleRepository;
 	private final IPersonalRepository personalRepository;
+	private final IPlatoRepository platoRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	@Value("${app.admin.username}")
@@ -41,11 +44,12 @@ public class DataInitializer implements CommandLineRunner {
 
 	public DataInitializer(IFestivalRepository festivalRepository, IUserRepository userRepository,
 			IUserRoleRepository userRoleRepository, IPersonalRepository personalRepository,
-			PasswordEncoder passwordEncoder) {
+			IPlatoRepository platoRepository, PasswordEncoder passwordEncoder) {
 		this.festivalRepository = festivalRepository;
 		this.userRepository = userRepository;
 		this.userRoleRepository = userRoleRepository;
 		this.personalRepository = personalRepository;
+		this.platoRepository = platoRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
 
@@ -53,7 +57,31 @@ public class DataInitializer implements CommandLineRunner {
 	@Transactional
 	public void run(String... args) {
 		cargarFestivales();
+		cargarPlatos();
 		cargarAdministrador();
+	}
+
+	private void cargarPlatos() {
+		crearPlatoSiNoExiste("Hamburguesa completa", 8500, 3500);
+		crearPlatoSiNoExiste("Pizza muzzarella", 9000, 3200);
+		crearPlatoSiNoExiste("Tacos x3", 7000, 2800);
+		crearPlatoSiNoExiste("Choripán", 5000, 1800);
+		crearPlatoSiNoExiste("Empanadas x3", 4500, 1500);
+		crearPlatoSiNoExiste("Papas fritas", 4000, 1200);
+		crearPlatoSiNoExiste("Cerveza artesanal", 4000, 1500);
+		crearPlatoSiNoExiste("Limonada", 2500, 600);
+	}
+
+	private void crearPlatoSiNoExiste(String nombre, float precioVenta, float costoProduccion) {
+		if (platoRepository.existsByNombre(nombre)) {
+			return;
+		}
+		Plato plato = new Plato();
+		plato.setNombre(nombre);
+		plato.setPrecioVenta(precioVenta);
+		plato.setCostoProduccion(costoProduccion);
+		platoRepository.save(plato);
+		logger.info("Plato precargado: {}", nombre);
 	}
 
 	private void cargarFestivales() {

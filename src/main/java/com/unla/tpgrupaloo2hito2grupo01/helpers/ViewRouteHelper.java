@@ -29,9 +29,13 @@ public class ViewRouteHelper {
 	public final static String ADMIN_UNIDADES = "admin/unidades";
 	public final static String ADMIN_RANKING = "admin/ranking";
 
+	//PEDIDO
+	public final static String PEDIDO_NUEVO = "pedido/nuevo";
+
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
 	public final static String ADMIN_ROOT = "/admin/festivales";
+	public final static String PEDIDO_ROOT = "/pedidos/nuevo";
 	public final static String DEGREE_ROOT = "/degrees/";
 	public final static String PERSON_ROOT = "/person";
 }
