@@ -16,6 +16,7 @@ classDiagram
 
     class Personal {
         <<abstract>>
+        -int EDAD_MINIMA$
         -long id
         -String nombre
         -String apellido
@@ -26,6 +27,7 @@ classDiagram
         -boolean eliminado
         -UnidadVenta unidadVenta
         -User user
+        -validarMayoriaDeEdad() void
     }
     class Cajero {
         -TurnoTrabajo turnoTrabajo
@@ -43,14 +45,20 @@ classDiagram
     }
 
     class User {
-        -long id
+        -int id
         -String username
         -String password
         -boolean enabled
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -Set~UserRole~ userRoles
     }
     class UserRole {
-        -long id
+        -int id
+        -User user
         -String role
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
     }
 
     class UnidadVenta {
@@ -63,14 +71,24 @@ classDiagram
         -Festival festivalAsistio
         -List~Plato~ lstPlatos
         -List~Personal~ lstPersonal
+        +getTipo() TipoUnidad*
     }
     class FoodTruck {
         -String patente
         -boolean conexionElectrica
+        +getTipo() TipoUnidad
     }
     class PuestoDesarmable {
         -int carpasComponen
         -int tiempoMontaje
+        +getTipo() TipoUnidad
+    }
+    class TipoUnidad {
+        <<enumeration>>
+        FOOD_TRUCK
+        PUESTO_DESARMABLE
+        -String descripcion
+        +getDescripcion() String
     }
 
     class Plato {
@@ -84,29 +102,32 @@ classDiagram
         -LocalDate fechaTransaccion
         -UnidadVenta unidadVenta
         -List~ItemPedido~ lstItems
+        +getTotal() double
     }
     class ItemPedido {
         -long id
         -Pedido pedido
         -Plato plato
         -int cantidad
+        +getSubtotal() double
     }
 
     Personal <|-- Cajero
     Personal <|-- Cocinero
     Personal <|-- Administrador
     Personal <|-- Responsable
-    Cajero --> TurnoTrabajo
-    Personal "0..1" --> "1" User : user
-    UserRole "0..*" --> "1" User
+    Cajero --> TurnoTrabajo : turnoTrabajo
+    Personal "0..1" --> "0..1" User : user
+    User "1" -- "0..*" UserRole : userRoles / user
 
     UnidadVenta <|-- FoodTruck
     UnidadVenta <|-- PuestoDesarmable
+    UnidadVenta ..> TipoUnidad : getTipo
 
-    Festival "1" o-- "0..*" UnidadVenta : festivalAsistio
-    UnidadVenta "1" o-- "0..*" Personal : lstPersonal
+    Festival "0..1" -- "0..*" UnidadVenta : lstUnidadVenta / festivalAsistio
+    UnidadVenta "0..1" -- "0..*" Personal : lstPersonal / unidadVenta
     UnidadVenta "0..*" --> "0..1" Responsable : responsable
     UnidadVenta "0..*" --> "0..*" Plato : lstPlatos
-    Pedido "0..*" --> "1" UnidadVenta
-    Pedido "1" *-- "1..*" ItemPedido
-    ItemPedido "0..*" --> "1" Plato
+    Pedido "0..*" --> "1" UnidadVenta : unidadVenta
+    Pedido "1" *-- "0..*" ItemPedido : lstItems / pedido
+    ItemPedido "0..*" --> "1" Plato : plato
