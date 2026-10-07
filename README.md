@@ -97,3 +97,17 @@ Alta de pedido:
 Hay que elegir la unidad de venta, y el usuario solo puede cargar pedidos en la suya (el Administrador, en cualquiera).
 La fecha debe estar dentro de las fechas del festival de esa unidad.
 Debe haber al menos un plato con cantidad mayor a 0.
+
+
+## EJEMPLO DE DTO DE REPORTE
+1. Unidades con mayor canon (ReporteMayoresCanonDTO):
+   Muestra el nombre comercial, el código único, el tipo de unidad y el canon de cada unidad del festival.
+   El canon no se guarda en la base: se calcula al armar el reporte según el tipo de unidad.
+
+2. Ranking de unidades por recaudación (RankingUnidadDTO):
+   Muestra el nombre comercial, el código único, el tipo de unidad, el responsable, la cantidad de pedidos y la recaudación.
+   La cantidad de pedidos y la recaudación se calculan a partir de los pedidos de la unidad.
+
+3. El responsable se muestra como texto (nombre y apellido), no como la entidad completa.
+
+   Los DTOs de reporte no se guardan en la base de datos: solo llevan los datos que se muestran en pantalla, ya calculados por el service.
