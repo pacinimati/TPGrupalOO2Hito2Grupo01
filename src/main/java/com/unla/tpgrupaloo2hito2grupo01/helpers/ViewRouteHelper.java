@@ -28,6 +28,7 @@ public class ViewRouteHelper {
 	public final static String ADMIN_FESTIVALES = "admin/festivales";
 	public final static String ADMIN_UNIDADES = "admin/unidades";
 	public final static String ADMIN_RANKING = "admin/ranking";
+	public final static String ADMIN_MAYORES_CANON = "admin/mayoresCanon";
 
 	//PEDIDO
 	public final static String PEDIDO_NUEVO = "pedido/nuevo";

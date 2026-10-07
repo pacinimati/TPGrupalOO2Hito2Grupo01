@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RankingUnidadDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.RegistroUnidadDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteMayoresCanonDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
@@ -141,6 +142,30 @@ public class UnidadVentaService implements IUnidadVentaService {
 				.map(unidad -> toRankingDTO(unidad, pedidosPorUnidad.getOrDefault(unidad.getId(), List.of())))
 				.sorted(Comparator.comparingDouble(RankingUnidadDTO::getRecaudacion).reversed()
 						.thenComparing(RankingUnidadDTO::getNombreComercial))
+				.toList();
+	}
+
+	@Override
+	public List<ErrorCampoDTO> validarCantidadMayoresCanon(int cantidad) {
+		List<ErrorCampoDTO> errores = new ArrayList<>();
+		if (cantidad < 1) {
+			errores.add(new ErrorCampoDTO("cantidad", "invalida", "La cantidad de unidades debe ser al menos 1"));
+		}
+		return errores;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ReporteMayoresCanonDTO> getUnidadesConMayorCanon(long festivalId, int cantidad) {
+		Festival festival = festivalRepository.findById(festivalId)
+				.orElseThrow(() -> new IllegalArgumentException("El festival seleccionado no existe"));
+
+		return unidadVentaRepository.findByFestivalAsistioId(festivalId).stream()
+				.map(unidad -> new ReporteMayoresCanonDTO(unidad.getNombreComercial(), unidad.getCodigoUnico(),
+						unidad.getTipo(), unidad.calcularCanon(festival)))
+				.sorted(Comparator.comparingDouble(ReporteMayoresCanonDTO::getCanon).reversed()
+						.thenComparing(ReporteMayoresCanonDTO::getNombreComercial))
+				.limit(Math.max(cantidad, 0))
 				.toList();
 	}
 
