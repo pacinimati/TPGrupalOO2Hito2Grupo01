@@ -24,7 +24,8 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Personal {
 
-	private static final int EDAD_MINIMA = 18;
+	// Regla única de mayoría de edad: la usan también los services al validar altas
+	public static final int EDAD_MINIMA = 18;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

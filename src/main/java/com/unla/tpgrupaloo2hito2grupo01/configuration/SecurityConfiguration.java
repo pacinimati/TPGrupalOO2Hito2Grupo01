@@ -38,6 +38,7 @@ public class SecurityConfiguration {
 					// Páginas públicas: inicio con festivales y registro de unidad de venta
 					auth.requestMatchers("/", "/index", "/registro/**", "/error").permitAll();
 					auth.requestMatchers("/admin/**").hasRole("ADMIN");
+					auth.requestMatchers("/responsable/**").hasRole("RESPONSABLE");
 					auth.anyRequest().authenticated();
 				})
 				.formLogin(login -> {

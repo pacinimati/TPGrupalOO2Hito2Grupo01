@@ -20,6 +20,7 @@ import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Pedido;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Personal;
 import com.unla.tpgrupaloo2hito2grupo01.entities.PuestoDesarmable;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Responsable;
 import com.unla.tpgrupaloo2hito2grupo01.entities.TipoUnidad;
@@ -38,8 +39,6 @@ import com.unla.tpgrupaloo2hito2grupo01.services.IUnidadVentaService;
 public class UnidadVentaService implements IUnidadVentaService {
 
 	public static final String ROLE_RESPONSABLE = "ROLE_RESPONSABLE";
-
-	private static final int EDAD_MINIMA = 18;
 
 	private final IUnidadVentaRepository unidadVentaRepository;
 	private final IPersonalRepository personalRepository;
@@ -72,7 +71,7 @@ public class UnidadVentaService implements IUnidadVentaService {
 			errores.add(new ErrorCampoDTO("codigoUnico", "duplicado", "Ya existe una unidad con ese código"));
 		}
 		if (dto.getFechaNacimiento() != null
-				&& Period.between(dto.getFechaNacimiento(), LocalDate.now()).getYears() < EDAD_MINIMA) {
+				&& Period.between(dto.getFechaNacimiento(), LocalDate.now()).getYears() < Personal.EDAD_MINIMA) {
 			errores.add(new ErrorCampoDTO("fechaNacimiento", "menor", "El responsable debe ser mayor de edad"));
 		}
 		if (dto.getTipo() == TipoUnidad.FOOD_TRUCK && (dto.getPatente() == null || dto.getPatente().isBlank())) {
