@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header d-flex justify-content-between align-items-start">
+            <div>
+                <h2>Empleados</h2>
+                <p class="text-muted mb-0" th:if="${unidad != null}">
+                    Unidad de venta <strong th:text="${unidad.nombreComercial}"></strong>
+                    (<span th:text="${unidad.codigoUnico}"></span>) · <span th:text="${unidad.festival}"></span>
+                </p>
+            </div>
+            <a th:href="@{/responsable/empleados/nuevo}" class="btn btn-primary" th:if="${unidad != null}">Nuevo empleado</a>
+        </div>
+
+        <div class="alert alert-success" th:if="${exito != null}" th:text="${exito}"></div>
+        <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+
+        <div class="card" th:if="${unidad == null}">
+            <div class="card-body">
+                <p class="text-muted mb-0">No tenés una unidad de venta asignada, por lo que no podés gestionar empleados.</p>
+            </div>
+        </div>
+
+        <div th:if="${unidad != null}">
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${!filtro.eliminados} ? 'active'"
+                       th:href="@{/responsable/empleados}">Activos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${filtro.eliminados} ? 'active'"
+                       th:href="@{/responsable/empleados(eliminados=true)}">Eliminados</a>
+                </li>
+            </ul>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form th:action="@{/responsable/empleados}" method="get" class="form-row align-items-end">
+                        <input type="hidden" name="eliminados" th:value="${filtro.eliminados}"/>
+                        <div class="form-group col-md-3 mb-md-0">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" name="nombre" th:value="${filtro.nombre}" class="form-control"/>
+                        </div>
+                        <div class="form-group col-md-3 mb-md-0">
+                            <label for="apellido">Apellido</label>
+                            <input type="text" id="apellido" name="apellido" th:value="${filtro.apellido}" class="form-control"/>
+                        </div>
+                        <div class="form-group col-md-2 mb-md-0">
+                            <label for="dni">DNI</label>
+                            <input type="number" id="dni" name="dni" th:value="${filtro.dni}" class="form-control"/>
+                        </div>
+                        <div class="form-group col-md-2 mb-md-0">
+                            <label for="tipo">Tipo</label>
+                            <select id="tipo" name="tipo" class="form-control">
+                                <option value="">Todos</option>
+                                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.etiqueta}"
+                                        th:selected="${filtro.tipo == t}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-outline-primary">Filtrar</button>
+                            <a th:href="@{/responsable/empleados(eliminados=${filtro.eliminados})}" class="btn btn-link">Limpiar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-muted mb-0" th:if="${empleados.isEmpty()}"
+                       th:text="${filtro.eliminados} ? 'No hay empleados eliminados.' : 'No hay empleados activos con esos filtros.'"></p>
+                    <div class="table-responsive" th:unless="${empleados.isEmpty()}">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Apellido y nombre</th>
+                                    <th>DNI</th>
+                                    <th>Email (usuario)</th>
+                                    <th>Puesto</th>
+                                    <th>Ingreso</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="e : ${empleados}">
+                                    <td th:text="${e.apellido} + ', ' + ${e.nombre}"></td>
+                                    <td th:text="${e.dni}"></td>
+                                    <td th:text="${e.email}"></td>
+                                    <td>
+                                        <span th:text="${e.tipo.etiqueta}"></span>
+                                        <small class="text-muted d-block" th:text="${e.detalle}"></small>
+                                    </td>
+                                    <td th:text="${#temporals.format(e.fechaIngreso, 'dd/MM/yyyy')}"></td>
+                                    <td class="text-right text-nowrap">
+                                        <a th:unless="${filtro.eliminados}"
+                                           th:href="@{/responsable/empleados/{id}/modificar(id=${e.id})}"
+                                           class="btn btn-outline-primary btn-sm">Modificar</a>
+                                        <form th:unless="${filtro.eliminados}"
+                                              th:action="@{/responsable/empleados/{id}/eliminar(id=${e.id})}" method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('¿Eliminar a este empleado? Perderá el acceso al sistema.');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                                        </form>
+                                        <form th:if="${filtro.eliminados}"
+                                              th:action="@{/responsable/empleados/{id}/reactivar(id=${e.id})}" method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('¿Reactivar a este empleado? Se le enviará por mail una contraseña nueva.');">
+                                            <button type="submit" class="btn btn-outline-success btn-sm">Reactivar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

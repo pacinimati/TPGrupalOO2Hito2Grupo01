@@ -33,10 +33,15 @@ public class ViewRouteHelper {
 	//PEDIDO
 	public final static String PEDIDO_NUEVO = "pedido/nuevo";
 
+	//EMPLEADOS (Responsable)
+	public final static String EMPLEADOS_LISTADO = "responsable/empleados";
+	public final static String EMPLEADOS_FORM = "responsable/empleadoForm";
+
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
 	public final static String ADMIN_ROOT = "/admin/festivales";
 	public final static String PEDIDO_ROOT = "/pedidos/nuevo";
+	public final static String EMPLEADOS_ROOT = "/responsable/empleados";
 	public final static String DEGREE_ROOT = "/degrees/";
 	public final static String PERSON_ROOT = "/person";
 }

@@ -27,6 +27,9 @@
                     <li class="nav-item" th:if="${esAdmin}">
                         <a class="nav-link" th:href="@{/admin/festivales}">Festivales</a>
                     </li>
+                    <li class="nav-item" th:if="${esResponsable}">
+                        <a class="nav-link" th:href="@{/responsable/empleados}">Empleados</a>
+                    </li>
                     <li class="nav-item" th:if="${username != null}">
                         <a class="nav-link" th:href="@{/pedidos/nuevo}">Nuevo pedido</a>
                     </li>

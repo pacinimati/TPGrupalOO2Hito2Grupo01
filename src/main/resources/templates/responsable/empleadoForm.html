@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0" th:text="${empleado.id == null} ? 'Nuevo empleado' : 'Modificar empleado'"></h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${unidad == null}">
+                    No tenés una unidad de venta asignada, por lo que no podés gestionar empleados.
+                </p>
+
+                <form th:unless="${unidad == null}" th:object="${empleado}" method="post" novalidate
+                      th:action="${empleado.id == null} ? @{/responsable/empleados/nuevo} : @{/responsable/empleados/{id}/modificar(id=${empleado.id})}">
+
+                    <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                        <div th:each="error : ${#fields.globalErrors()}" th:text="${error}"></div>
+                    </div>
+
+                    <p class="text-muted">
+                        Unidad de venta <strong th:text="${unidad.nombreComercial}"></strong>
+                        (<span th:text="${unidad.codigoUnico}"></span>)
+                    </p>
+
+                    <h6 class="text-muted">Puesto</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="tipo">Tipo de empleado *</label>
+                            <!-- Al modificar el tipo no cambia: se muestra bloqueado y se reenvía oculto -->
+                            <select id="tipo" th:field="*{tipo}" class="form-control"
+                                    th:disabled="${empleado.id != null}"
+                                    th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                                <option value="">-- Seleccionar --</option>
+                                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.etiqueta}"></option>
+                            </select>
+                            <input type="hidden" name="tipo" th:if="${empleado.id != null}" th:value="${empleado.tipo}"/>
+                            <div class="invalid-feedback" th:errors="*{tipo}"></div>
+                        </div>
+                        <div class="form-group col-md-4 campo-cocina">
+                            <label for="categoriaCocina">Categoría *</label>
+                            <select id="categoriaCocina" th:field="*{categoriaCocina}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('categoriaCocina')} ? 'is-invalid'">
+                                <option value="">-- Seleccionar --</option>
+                                <option th:each="c : ${categorias}" th:value="${c}"
+                                        th:text="${c.etiqueta} + ' (plus $ ' + ${#numbers.formatDecimal(c.plus, 1, 'POINT', 0, 'COMMA')} + ')'"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{categoriaCocina}"></div>
+                        </div>
+                        <div class="form-group col-md-4 campo-cocina">
+                            <label for="especialidadCulinaria">Tarea</label>
+                            <input type="text" id="especialidadCulinaria" th:field="*{especialidadCulinaria}"
+                                   placeholder="Ej: Parrillero" class="form-control"
+                                   th:classappend="${#fields.hasErrors('especialidadCulinaria')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{especialidadCulinaria}"></div>
+                        </div>
+                        <div class="form-group col-md-4 campo-cajero">
+                            <label for="turnoTrabajo">Turno *</label>
+                            <select id="turnoTrabajo" th:field="*{turnoTrabajo}" class="form-control"
+                                    th:classappend="${#fields.hasErrors('turnoTrabajo')} ? 'is-invalid'">
+                                <option value="">-- Seleccionar --</option>
+                                <option th:each="t : ${turnos}" th:value="${t}" th:text="${t.etiqueta}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{turnoTrabajo}"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-3">Datos personales</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombre *</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{nombre}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="apellido">Apellido *</label>
+                            <input type="text" id="apellido" th:field="*{apellido}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{apellido}"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="dni">DNI *</label>
+                            <input type="number" id="dni" th:field="*{dni}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{dni}"></div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="fechaNacimiento">Fecha de nacimiento *</label>
+                            <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('fechaNacimiento')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{fechaNacimiento}"></div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="fechaIngreso">Fecha de ingreso *</label>
+                            <input type="date" id="fechaIngreso" th:field="*{fechaIngreso}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('fechaIngreso')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{fechaIngreso}"></div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-muted mt-3">Acceso al sistema</h6>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="email">Email (será su usuario) *</label>
+                            <input type="email" id="email" th:field="*{email}" class="form-control"
+                                   th:readonly="${empleado.id != null}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{email}"></div>
+                            <small class="form-text text-muted" th:if="${empleado.id == null}">
+                                A este email se enviará una contraseña generada automáticamente.
+                            </small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"
+                            th:text="${empleado.id == null} ? 'Dar de alta' : 'Guardar cambios'"></button>
+                    <a th:href="@{/responsable/empleados}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Muestra solo los campos propios del tipo elegido (cocina o cajero)
+            function actualizarCampos() {
+                var tipo = $('#tipo').val() || $('input[name="tipo"][type="hidden"]').val();
+                $('.campo-cocina').toggle(tipo === 'COCINERO');
+                $('.campo-cajero').toggle(tipo === 'CAJERO');
+            }
+            $('#tipo').on('change', actualizarCampos);
+            actualizarCampos();
+        });
+    </script>
+</body>
+</html>

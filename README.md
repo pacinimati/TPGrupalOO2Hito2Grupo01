@@ -21,6 +21,8 @@ CASO DE USO 4: ALTA DE PEDIDOS - MATIAS PACINI - https://github.com/pacinimati/T
 
 CASO DE USO 5: UNIDADES CON MAYOR CANON (ADMIN) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/6
 
+CASO DE USO 6: ALTAS, BAJAS Y MODIFICACIONES DE EMPLEADOS (RESPONSABLE) - MATIAS PACINI - (PR pendiente)
+
 
 ## Requisitos
 
@@ -59,6 +61,27 @@ En Windows (PowerShell/cmd):
 ```bash
 mvnw.cmd spring-boot:run
 ```
+
+## Configuración del envío de mails
+
+El alta de un empleado (y la reactivación de uno eliminado) envía un mail con su usuario (su email) y una contraseña generada aleatoriamente. Para que el envío funcione hay que configurar en el `.env` una cuenta de Gmail desde la cual se manda el mail. Si el mail no se puede enviar, el alta se revierte y el formulario avisa el error.
+
+### Cómo configurar la cuenta de Gmail en el `.env`
+
+1. Usar una cuenta de Gmail que tenga activada la **verificación en 2 pasos** (se activa en https://myaccount.google.com/security).
+2. Generar una **contraseña de aplicación** (no es la contraseña de la cuenta): entrar a https://myaccount.google.com/apppasswords, ponerle un nombre (por ejemplo `Epicentro`) y crear. Google muestra una clave de 16 letras, una sola vez.
+3. Completar en el `.env` las variables de mail. `MAIL_PASSWORD` va **sin espacios**:
+
+   ```
+   MAIL_HOST=smtp.gmail.com
+   MAIL_PORT=587
+   MAIL_USERNAME=tu.casilla@gmail.com
+   MAIL_PASSWORD=abcdefghijklmnop
+   ```
+
+4. Reiniciar la aplicación para que tome los cambios.
+
+Los mails salen desde esa casilla (`MAIL_USERNAME`), así que el empleado los recibe de esa cuenta; si no aparece en la bandeja de entrada hay que revisar spam. El `.env` no se versiona, por lo que la clave no se sube al repositorio.
 
 Al iniciar, `spring-dotenv` carga automáticamente las variables del archivo `.env` sin necesidad de exportarlas manualmente en la terminal ni configurarlas en el IDE.
 

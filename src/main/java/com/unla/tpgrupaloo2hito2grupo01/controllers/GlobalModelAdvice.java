@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalModelAdvice {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+	private static final String ROLE_RESPONSABLE = "ROLE_RESPONSABLE";
 
 	@ModelAttribute("username")
 	public String username() {
@@ -24,8 +25,17 @@ public class GlobalModelAdvice {
 
 	@ModelAttribute("esAdmin")
 	public boolean esAdmin() {
+		return tieneRol(ROLE_ADMIN);
+	}
+
+	@ModelAttribute("esResponsable")
+	public boolean esResponsable() {
+		return tieneRol(ROLE_RESPONSABLE);
+	}
+
+	private boolean tieneRol(String rol) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return authentication != null && authentication.getAuthorities().stream()
-				.anyMatch(a -> ROLE_ADMIN.equals(a.getAuthority()));
+				.anyMatch(a -> rol.equals(a.getAuthority()));
 	}
 }
