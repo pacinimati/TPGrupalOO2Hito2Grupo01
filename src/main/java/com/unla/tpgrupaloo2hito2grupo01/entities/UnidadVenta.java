@@ -55,4 +55,7 @@ public abstract class UnidadVenta {
 
 	// Cada subtipo informa qué tipo de unidad es
 	public abstract TipoUnidad getTipo();
+
+	// Monto que paga la unidad en el festival; los valores unitarios los define el festival
+	public abstract double calcularCanon(Festival festival);
 }

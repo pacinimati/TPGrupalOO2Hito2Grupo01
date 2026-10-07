@@ -18,4 +18,11 @@ public class PuestoDesarmable extends UnidadVenta {
 	public TipoUnidad getTipo() {
 		return TipoUnidad.PUESTO_DESARMABLE;
 	}
+
+	// Superficie * costo por superficie, menos el tiempo de montaje (min) * costo por montaje
+	@Override
+	public double calcularCanon(Festival festival) {
+		return (double) getSuperficieM2() * festival.getCostoPorSuperficie()
+				- (double) tiempoMontaje * festival.getCostoPorMontaje();
+	}
 }

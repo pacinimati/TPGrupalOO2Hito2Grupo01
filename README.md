@@ -17,6 +17,8 @@ CASO DE USO 3: RANKING DE UNIDADES(ADMIN) - MATIAS PACINI - https://github.com/p
 
 CASO DE USO 4: ALTA DE PEDIDOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/5
 
+CASO DE USO 5: UNIDADES CON MAYOR CANON (ADMIN) - MATIAS PACINI - (link al PR)
+
 
 
 ## Requisitos
