@@ -85,3 +85,15 @@ Los mails salen desde esa casilla (`MAIL_USERNAME`), así que el empleado los re
 
 Al iniciar, `spring-dotenv` carga automáticamente las variables del archivo `.env` sin necesidad de exportarlas manualmente en la terminal ni configurarlas en el IDE.
 
+## EJEMPLO DE VALIDACIONES DE CARGA
+
+Matias Pacini:
+Registro de unidad de venta + Responsable:
+El usuario es obligatorio y no puede estar ya en uso.
+La contraseña debe tener al menos 6 caracteres.
+El Responsable debe ser mayor de edad (18).
+
+Alta de pedido:
+Hay que elegir la unidad de venta, y el usuario solo puede cargar pedidos en la suya (el Administrador, en cualquiera).
+La fecha debe estar dentro de las fechas del festival de esa unidad.
+Debe haber al menos un plato con cantidad mayor a 0.
