@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.PedidoFormDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.PedidoResumenDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteVentaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaOpcionDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Administrador;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
@@ -94,6 +95,15 @@ public class PedidoService implements IPedidoService {
 
 		return new PedidoResumenDTO(pedido.getId(), unidad.get().getNombreComercial(),
 				pedido.getLstItems().size(), pedido.getTotal());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ReporteVentaDTO getReporteRecaudacion(long festivalId) {
+		double recaudacionTotal = pedidoRepository.findByFestivalConItems(festivalId).stream()
+				.mapToDouble(Pedido::getTotal)
+				.sum();
+		return new ReporteVentaDTO(recaudacionTotal);
 	}
 
 	private List<ErrorCampoDTO> validar(PedidoFormDTO dto, Optional<UnidadVenta> unidad, Map<Long, Plato> platos) {
