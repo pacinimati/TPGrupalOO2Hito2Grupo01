@@ -16,6 +16,7 @@ import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
 import com.unla.tpgrupaloo2hito2grupo01.services.IFestivalService;
+import com.unla.tpgrupaloo2hito2grupo01.services.IPedidoService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IUnidadVentaService;
 
 @Controller
@@ -25,10 +26,13 @@ public class AdminController {
 
 	private final IFestivalService festivalService;
 	private final IUnidadVentaService unidadVentaService;
+	private final IPedidoService pedidoService;
 
-	public AdminController(IFestivalService festivalService, IUnidadVentaService unidadVentaService) {
+	public AdminController(IFestivalService festivalService, IUnidadVentaService unidadVentaService,
+			IPedidoService pedidoService) {
 		this.festivalService = festivalService;
 		this.unidadVentaService = unidadVentaService;
+		this.pedidoService = pedidoService;
 	}
 
 	//GET: SERVER/admin/festivales
@@ -58,6 +62,17 @@ public class AdminController {
 		ModelAndView mAV = new ModelAndView(ViewRouteHelper.ADMIN_RANKING);
 		mAV.addObject("festival", festival);
 		mAV.addObject("ranking", unidadVentaService.getRankingPorRecaudacion(id));
+		return mAV;
+	}
+
+	//GET: SERVER/admin/festivales/{id}/recaudacion
+	@GetMapping("/festivales/{id}/recaudacion")
+	public ModelAndView recaudacion(@PathVariable long id) {
+		Festival festival = festivalService.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El festival no existe"));
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.ADMIN_RECAUDACION);
+		mAV.addObject("festival", festival);
+		mAV.addObject("reporte", pedidoService.getReporteRecaudacion(id));
 		return mAV;
 	}
 

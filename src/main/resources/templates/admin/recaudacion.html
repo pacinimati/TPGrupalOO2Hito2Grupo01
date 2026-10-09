@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <a th:href="@{/admin/festivales}">&larr; Volver a festivales</a>
+            <h2 class="mt-2">Recaudación total · <span th:text="${festival.nombre}">Festival</span></h2>
+            <p class="text-muted mb-0">
+                <span th:text="${festival.temporada}"></span> ·
+                <span th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')}"></span> al
+                <span th:text="${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total recaudado</h5>
+                <p class="display-4 mb-0"
+                   th:text="'$ ' + ${#numbers.formatDecimal(reporte.recaudacionTotal, 1, 'POINT', 2, 'COMMA')}">$ 0,00</p>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
