@@ -18,4 +18,10 @@ public interface IPedidoRepository extends JpaRepository<Pedido, Long> {
 	@Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.lstItems i LEFT JOIN FETCH i.plato "
 			+ "WHERE p.unidadVenta.festivalAsistio.id = :festivalId")
 	List<Pedido> findByFestivalConItems(@Param("festivalId") long festivalId);
+
+	// Pedidos de una unidad de un festival, con sus items y platos en una sola consulta
+	@Query("SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.lstItems i LEFT JOIN FETCH i.plato "
+			+ "WHERE p.unidadVenta.id = :unidadVentaId AND p.unidadVenta.festivalAsistio.id = :festivalId")
+	List<Pedido> findByUnidadVentaIdAndFestivalConItems(@Param("unidadVentaId") long unidadVentaId,
+			@Param("festivalId") long festivalId);
 }

@@ -13,10 +13,12 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
 import com.unla.tpgrupaloo2hito2grupo01.services.IFestivalService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IPedidoService;
+import com.unla.tpgrupaloo2hito2grupo01.services.IRentabilidadNetaService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IUnidadVentaService;
 
 @Controller
@@ -27,12 +29,14 @@ public class AdminController {
 	private final IFestivalService festivalService;
 	private final IUnidadVentaService unidadVentaService;
 	private final IPedidoService pedidoService;
+	private final IRentabilidadNetaService rentabilidadNetaService;
 
 	public AdminController(IFestivalService festivalService, IUnidadVentaService unidadVentaService,
-			IPedidoService pedidoService) {
+			IPedidoService pedidoService, IRentabilidadNetaService rentabilidadNetaService) {
 		this.festivalService = festivalService;
 		this.unidadVentaService = unidadVentaService;
 		this.pedidoService = pedidoService;
+		this.rentabilidadNetaService = rentabilidadNetaService;
 	}
 
 	//GET: SERVER/admin/festivales
@@ -89,6 +93,25 @@ public class AdminController {
 		mAV.addObject("reporte", errores.isEmpty()
 				? unidadVentaService.getUnidadesConMayorCanon(id, cantidad)
 				: List.of());
+		return mAV;
+	}
+
+	// GET: SERVER/admin/festivales/{festivalId}/unidades/{unidadVentaId}/rentabilidad
+	@GetMapping("/festivales/{festivalId}/unidades/{unidadVentaId}/rentabilidad")
+	public ModelAndView rentabilidadNeta(@PathVariable long festivalId, @PathVariable long unidadVentaId) {
+		Festival festival = festivalService.findById(festivalId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El festival no existe"));
+		ReporteRentabilidadNetaDTO reporte;
+		try {
+			reporte = rentabilidadNetaService.getReporte(festivalId, unidadVentaId)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "La unidad de venta no existe"));
+		} catch (IllegalArgumentException e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La unidad no pertenece al festival", e);
+		}
+
+		ModelAndView mAV = new ModelAndView(ViewRouteHelper.ADMIN_RENTABILIDAD_NETA);
+		mAV.addObject("festival", festival);
+		mAV.addObject("reporte", reporte);
 		return mAV;
 	}
 }

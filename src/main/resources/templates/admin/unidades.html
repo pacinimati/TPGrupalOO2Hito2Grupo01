@@ -31,6 +31,7 @@
                                 <th>Superficie</th>
                                 <th>Responsable</th>
                                 <th>Detalle</th>
+                                <th>Reporte</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,6 +46,12 @@
                                           th:text="'Patente ' + ${unidad.patente} + (${unidad.conexionElectrica} ? ' · Con conexión eléctrica' : ' · Sin conexión eléctrica')"></span>
                                     <span th:case="'PUESTO_DESARMABLE'"
                                           th:text="${unidad.carpasComponen} + ' carpa(s) · ' + ${unidad.tiempoMontaje} + ' min de montaje'"></span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-primary btn-sm"
+                                       th:href="@{/admin/festivales/{festivalId}/unidades/{unidadVentaId}/rentabilidad(festivalId=${festival.id}, unidadVentaId=${unidad.id})}">
+                                        Rentabilidad neta
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>
