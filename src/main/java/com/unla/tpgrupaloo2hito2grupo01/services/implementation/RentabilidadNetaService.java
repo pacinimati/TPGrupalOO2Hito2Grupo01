@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,13 +83,28 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 		Double rentabilidadNeta = completo
 				? importePedidos - costoPlatos - costoSueldos - canon
 				: null;
-		String estado = completo
-				? "Cálculo completo: no hay costos salariales pendientes de determinar."
-				: String.join(" ", pendientesSalariales);
+		// Solo se informa un estado cuando hay sueldos pendientes que dejan el reporte incompleto
+		String estado = completo ? null : String.join(" ", pendientesSalariales);
 
 		return Optional.of(new ReporteRentabilidadNetaDTO(unidad.getId(), unidad.getNombreComercial(),
 				festival.getNombre(), importePedidos, costoPlatos, costoSueldos, canon, rentabilidadNeta,
 				completo, estado));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<ReporteRentabilidadNetaDTO> getReporteDeUnidadDelResponsable(String username) {
+		Personal personal = personalRepository.findByUserUsernameAndEliminadoFalse(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+		if (!(personal instanceof Responsable responsable)) {
+			throw new AccessDeniedException("El usuario autenticado no es Responsable");
+		}
+
+		UnidadVenta unidad = responsable.getUnidadVenta();
+		if (unidad == null || unidad.getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return getReporte(unidad.getFestivalAsistio().getId(), unidad.getId());
 	}
 
 	private double costoProduccionItem(ItemPedido item) {
@@ -131,17 +148,14 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 		return sueldos;
 	}
 
+	// El Responsable está a cargo de la unidad y no cobra sueldo de ella: el enunciado solo define el sueldo de
+	// cocina y cajeros (igual que en la liquidación de haberes), así que no deja el reporte incompleto
 	private void identificarTratamientoSalarialPendiente(List<Personal> personal, List<String> pendientes) {
-		boolean responsablePendiente = false;
 		boolean administradorPendiente = false;
 		boolean otroTipoPendiente = false;
 
 		for (Personal integrante : personal) {
-			if (integrante instanceof Cocinero) {
-				continue;
-			} else if (integrante instanceof Responsable) {
-				responsablePendiente = true;
-			} else if (integrante instanceof Cajero) {
+			if (integrante instanceof Cocinero || integrante instanceof Cajero || integrante instanceof Responsable) {
 				continue;
 			} else if (integrante instanceof Administrador) {
 				administradorPendiente = true;
@@ -150,9 +164,6 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 			}
 		}
 
-		if (responsablePendiente) {
-			pendientes.add("No se puede completar la rentabilidad: el enunciado no define el sueldo del Responsable.");
-		}
 		if (administradorPendiente) {
 			pendientes.add("No se puede determinar el tratamiento salarial del Administrador asociado a la unidad.");
 		}
