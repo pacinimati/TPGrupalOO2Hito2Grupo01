@@ -29,6 +29,8 @@ CASO DE USO 8: REPORTES DE RECAUDACION - RODRIGO MERCADO - https://github.com/pa
 
 CASO DE USO 9: CALCULO DE RENTABILIDAD NETA - RODRIGO MERCADO - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/10 https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/12
 
+CASO DE USO 10: CALCULO DE RENTABILIDAD NETA POR FECHAS - RODRIGO MERCADO https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/14
+
 ## Requisitos
 
 - JDK 17
