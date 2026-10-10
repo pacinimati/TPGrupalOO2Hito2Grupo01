@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <a th:href="@{/responsable/empleados}">&larr; Volver a empleados</a>
+            <h2 class="mt-2">Liquidación de haberes</h2>
+            <p class="text-muted mb-0" th:if="${unidad != null}">
+                Unidad de venta <strong th:text="${unidad.nombreComercial}"></strong>
+                (<span th:text="${unidad.codigoUnico}"></span>) ·
+                <span th:text="${unidad.festival}"></span>
+                <span th:if="${unidad.fechaInicio != null and unidad.fechaFin != null}">
+                    · <span th:text="${#temporals.format(unidad.fechaInicio, 'dd/MM/yyyy')}"></span>
+                    al <span th:text="${#temporals.format(unidad.fechaFin, 'dd/MM/yyyy')}"></span>
+                </span>
+            </p>
+        </div>
+
+        <div class="card" th:if="${unidad == null}">
+            <div class="card-body">
+                <p class="text-muted mb-0">No tenés una unidad de venta asignada.</p>
+            </div>
+        </div>
+
+        <div class="card" th:if="${unidad != null}">
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${liquidaciones.isEmpty()}">
+                    No hay empleados activos para consultar.
+                </p>
+
+                <div class="table-responsive" th:unless="${liquidaciones.isEmpty()}">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Apellido y nombre</th>
+                                <th>Tipo / categoría</th>
+                                <th>Sueldo calculado</th>
+                                <th>Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="liquidacion : ${liquidaciones}">
+                                <td th:text="${liquidacion.apellido + ', ' + liquidacion.nombre}"></td>
+                                <td>
+                                    <span th:text="${liquidacion.tipo.etiqueta}"></span>
+                                    <small class="text-muted d-block"
+                                           th:if="${liquidacion.categoriaCocina != null}"
+                                           th:text="${liquidacion.categoriaCocina.etiqueta}"></small>
+                                </td>
+                                <td th:if="${liquidacion.sueldoCalculado != null}"
+                                    th:text="${'$' + #numbers.formatDecimal(liquidacion.sueldoCalculado, 1, 2, 'COMMA')}"></td>
+                                <td th:unless="${liquidacion.sueldoCalculado != null}" class="text-muted">
+                                    No disponible
+                                </td>
+                                <td th:text="${liquidacion.motivoNoCalculable != null ? liquidacion.motivoNoCalculable : '-'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
