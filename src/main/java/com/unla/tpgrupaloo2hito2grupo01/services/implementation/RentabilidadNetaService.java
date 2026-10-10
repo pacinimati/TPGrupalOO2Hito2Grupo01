@@ -1,11 +1,8 @@
 package com.unla.tpgrupaloo2hito2grupo01.services.implementation;
 
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Administrador;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
-import com.unla.tpgrupaloo2hito2grupo01.entities.CategoriaCocina;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cocinero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.ItemPedido;
@@ -25,7 +21,9 @@ import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUnidadVentaRepository;
+import com.unla.tpgrupaloo2hito2grupo01.services.ICalculoSalarialService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IRentabilidadNetaService;
+import com.unla.tpgrupaloo2hito2grupo01.services.ICalculoSalarialService.Resultado;
 
 @Service("rentabilidadNetaService")
 public class RentabilidadNetaService implements IRentabilidadNetaService {
@@ -34,14 +32,16 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 	private final IUnidadVentaRepository unidadVentaRepository;
 	private final IPedidoRepository pedidoRepository;
 	private final IPersonalRepository personalRepository;
+	private final ICalculoSalarialService calculoSalarialService;
 
 	public RentabilidadNetaService(IFestivalRepository festivalRepository,
 			IUnidadVentaRepository unidadVentaRepository, IPedidoRepository pedidoRepository,
-			IPersonalRepository personalRepository) {
+			IPersonalRepository personalRepository, ICalculoSalarialService calculoSalarialService) {
 		this.festivalRepository = festivalRepository;
 		this.unidadVentaRepository = unidadVentaRepository;
 		this.pedidoRepository = pedidoRepository;
 		this.personalRepository = personalRepository;
+		this.calculoSalarialService = calculoSalarialService;
 	}
 
 	@Override
@@ -95,75 +95,40 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 	}
 
 	private double calcularSueldosCocineros(List<Personal> personal, Festival festival, List<String> pendientes) {
-		OptionalLong diasDuracion = diasDuracionFestival(festival);
 		double sueldos = 0.0;
 
 		for (Personal integrante : personal) {
-			if (!(integrante instanceof Cocinero cocinero)) {
+			if (!(integrante instanceof Cocinero)) {
 				continue;
 			}
-
-			if (diasDuracion.isEmpty()) {
-				pendientes.add("No se puede calcular el sueldo de cocina: el festival no tiene fechas válidas.");
-				continue;
+			ICalculoSalarialService.Resultado resultado = calculoSalarialService
+					.calcularSueldo(integrante, festival).orElseThrow();
+			if (resultado.esCalculable()) {
+				sueldos += resultado.sueldo();
+			} else {
+				pendientes.add(resultado.error());
 			}
-
-			Optional<CategoriaCocina> categoria = CategoriaCocina.desdePlus(cocinero.getPlus());
-			if (categoria.isEmpty()) {
-				pendientes.add("No se puede calcular el sueldo de cocina: el plus no corresponde a una categoría conocida.");
-				continue;
-			}
-
-			double factor = (diasDuracion.getAsLong() / ConstantesSalariales.DIAS_POR_TRAMO + 1)
-					* ConstantesSalariales.FACTOR_SUELDO;
-			sueldos += factor * (ConstantesSalariales.SUELDO_BASE + categoria.get().getPlus());
 		}
 
 		return sueldos;
 	}
 
 	private double calcularSueldosCajeros(List<Personal> personal, Festival festival, List<String> pendientes) {
-		OptionalLong diasDuracion = diasDuracionFestival(festival);
 		double sueldos = 0.0;
 
 		for (Personal integrante : personal) {
-			if (!(integrante instanceof Cajero cajero)) {
+			if (!(integrante instanceof Cajero)) {
 				continue;
 			}
-
-			if (diasDuracion.isEmpty()) {
-				pendientes.add("No se puede calcular el sueldo del Cajero: el festival no tiene fechas válidas.");
-				continue;
+			Resultado resultado = calculoSalarialService.calcularSueldo(integrante, festival).orElseThrow();
+			if (resultado.esCalculable()) {
+				sueldos += resultado.sueldo();
+			} else {
+				pendientes.add(resultado.error());
 			}
-
-			if (cajero.getFechaIngreso() == null) {
-				pendientes.add("No se puede calcular el sueldo del Cajero: falta la fecha de ingreso para determinar la antigüedad.");
-				continue;
-			}
-
-			if (cajero.getFechaIngreso().isAfter(festival.getFechaFin())) {
-				pendientes.add("No se puede calcular el sueldo del Cajero: la fecha de ingreso es posterior al fin del festival.");
-				continue;
-			}
-
-			int aniosAntiguedad = Period.between(cajero.getFechaIngreso(), festival.getFechaFin()).getYears();
-			double factor = (diasDuracion.getAsLong() / ConstantesSalariales.DIAS_POR_TRAMO + 1)
-					* ConstantesSalariales.FACTOR_SUELDO;
-			double sueldoBaseMasAntiguedad = ConstantesSalariales.SUELDO_BASE
-					+ aniosAntiguedad * ConstantesSalariales.ANTIGUEDAD_POR_ANIO;
-			sueldos += factor * sueldoBaseMasAntiguedad;
 		}
 
 		return sueldos;
-	}
-
-	// Se cuentan ambos días de calendario que delimitan el festival.
-	private OptionalLong diasDuracionFestival(Festival festival) {
-		if (festival.getFechaInicio() == null || festival.getFechaFin() == null
-				|| festival.getFechaFin().isBefore(festival.getFechaInicio())) {
-			return OptionalLong.empty();
-		}
-		return OptionalLong.of(ChronoUnit.DAYS.between(festival.getFechaInicio(), festival.getFechaFin()) + 1);
 	}
 
 	private void identificarTratamientoSalarialPendiente(List<Personal> personal, List<String> pendientes) {
