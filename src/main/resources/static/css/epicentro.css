@@ -172,6 +172,11 @@ a:hover {
     background: var(--surface);
 }
 
+/* Bootstrap fija la altura de los select; con el padding propio recortaba el texto */
+select.form-control:not([size]):not([multiple]) {
+    height: auto;
+}
+
 .form-control:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(234, 88, 12, .15);
@@ -265,6 +270,17 @@ h6.text-muted {
 .btn-outline-primary:hover {
     background: var(--accent);
     border-color: var(--accent);
+}
+
+/* Grupo de acciones en una fila de tabla: botones del mismo ancho en dos columnas */
+.acciones-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .5rem;
+}
+
+.acciones-grid .btn {
+    white-space: nowrap;
 }
 
 /* Alerts */
