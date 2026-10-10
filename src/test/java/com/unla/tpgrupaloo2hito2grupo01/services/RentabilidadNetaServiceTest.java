@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
@@ -24,6 +25,7 @@ import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
 import com.unla.tpgrupaloo2hito2grupo01.entities.ItemPedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Pedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Plato;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Responsable;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
@@ -294,6 +296,73 @@ class RentabilidadNetaServiceTest {
 		assertNull(reporte.costoSueldos());
 		assertNull(reporte.rentabilidadNeta());
 		assertTrue(reporte.estado().contains("el festival no tiene fechas válidas"));
+	}
+
+	@Test
+	void elResponsableDeLaUnidadNoDejaElReporteIncompletoNiSumaSueldo() {
+		Festival festival = festivalConDuracion(FESTIVAL_ID, 38);
+		FoodTruck unidad = unidad(UNIDAD_ID, festival);
+		Cocinero cocinero = new Cocinero();
+		cocinero.setPlus(50_000);
+		when(festivalRepository.findById(FESTIVAL_ID)).thenReturn(Optional.of(festival));
+		when(unidadVentaRepository.findByIdConFestival(UNIDAD_ID)).thenReturn(Optional.of(unidad));
+		when(pedidoRepository.findByUnidadVentaIdAndFestivalConItems(UNIDAD_ID, FESTIVAL_ID))
+				.thenReturn(List.of());
+		when(personalRepository.findByUnidadVentaIdAndEliminadoFalse(UNIDAD_ID))
+				.thenReturn(List.of(new Responsable(), cocinero));
+
+		ReporteRentabilidadNetaDTO reporte = service.getReporte(FESTIVAL_ID, UNIDAD_ID).orElseThrow();
+
+		assertTrue(reporte.completo());
+		assertEquals(225_000, reporte.costoSueldos());
+		assertEquals(-225_000, reporte.rentabilidadNeta());
+	}
+
+	@Test
+	void calculaLaRentabilidadDeLaUnidadDelResponsableEnSuFestival() {
+		Festival festival = festivalConDuracion(FESTIVAL_ID, 38);
+		FoodTruck unidad = unidad(UNIDAD_ID, festival);
+		Responsable responsable = new Responsable();
+		responsable.setUnidadVenta(unidad);
+		Plato plato = plato(100, 40);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("resp")).thenReturn(Optional.of(responsable));
+		when(festivalRepository.findById(FESTIVAL_ID)).thenReturn(Optional.of(festival));
+		when(unidadVentaRepository.findByIdConFestival(UNIDAD_ID)).thenReturn(Optional.of(unidad));
+		when(pedidoRepository.findByUnidadVentaIdAndFestivalConItems(UNIDAD_ID, FESTIVAL_ID))
+				.thenReturn(List.of(pedido(item(plato, 3))));
+		when(personalRepository.findByUnidadVentaIdAndEliminadoFalse(UNIDAD_ID)).thenReturn(List.of(responsable));
+
+		ReporteRentabilidadNetaDTO reporte = service.getReporteDeUnidadDelResponsable("resp").orElseThrow();
+
+		assertEquals(UNIDAD_ID, reporte.unidadVentaId());
+		assertEquals(300, reporte.importePedidos());
+		assertEquals(120, reporte.costoPlatos());
+		assertTrue(reporte.completo());
+		assertEquals(180.0, reporte.rentabilidadNeta());
+	}
+
+	@Test
+	void responsableSinUnidadNoTieneReporte() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("resp")).thenReturn(Optional.of(new Responsable()));
+
+		assertTrue(service.getReporteDeUnidadDelResponsable("resp").isEmpty());
+		verify(festivalRepository, never()).findById(FESTIVAL_ID);
+	}
+
+	@Test
+	void responsableConUnidadSinFestivalNoTieneReporte() {
+		Responsable responsable = new Responsable();
+		responsable.setUnidadVenta(unidad(UNIDAD_ID, null));
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("resp")).thenReturn(Optional.of(responsable));
+
+		assertTrue(service.getReporteDeUnidadDelResponsable("resp").isEmpty());
+	}
+
+	@Test
+	void rechazaElReporteDeResponsableParaOtroTipoDePersonal() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("cajero")).thenReturn(Optional.of(new Cajero()));
+
+		assertThrows(AccessDeniedException.class, () -> service.getReporteDeUnidadDelResponsable("cajero"));
 	}
 
 	@Test
