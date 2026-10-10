@@ -52,6 +52,10 @@
                                        th:href="@{/admin/festivales/{festivalId}/unidades/{unidadVentaId}/rentabilidad(festivalId=${festival.id}, unidadVentaId=${unidad.id})}">
                                         Rentabilidad neta
                                     </a>
+                                    <a class="btn btn-outline-secondary btn-sm mt-1"
+                                       th:href="@{/admin/festivales/{festivalId}/unidades/{unidadVentaId}/rentabilidad/periodo(festivalId=${festival.id}, unidadVentaId=${unidad.id})}">
+                                        Rentabilidad neta por período
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

@@ -31,6 +31,7 @@ public class ViewRouteHelper {
 	public final static String ADMIN_MAYORES_CANON = "admin/mayoresCanon";
 	public final static String ADMIN_RECAUDACION = "admin/recaudacion";
 	public final static String ADMIN_RENTABILIDAD_NETA = "admin/rentabilidadNeta";
+	public final static String ADMIN_RENTABILIDAD_NETA_PERIODO = "admin/rentabilidadNetaPeriodo";
 
 	//PEDIDO
 	public final static String PEDIDO_NUEVO = "pedido/nuevo";
@@ -40,6 +41,7 @@ public class ViewRouteHelper {
 	public final static String EMPLEADOS_FORM = "responsable/empleadoForm";
 	public final static String RESPONSABLE_LIQUIDACIONES = "responsable/liquidaciones";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA = "responsable/rentabilidadNeta";
+	public final static String RESPONSABLE_RENTABILIDAD_NETA_PERIODO = "responsable/rentabilidadNetaPeriodo";
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";

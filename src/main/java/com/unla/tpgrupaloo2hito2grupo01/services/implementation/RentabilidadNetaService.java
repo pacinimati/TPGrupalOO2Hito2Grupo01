@@ -1,5 +1,7 @@
 package com.unla.tpgrupaloo2hito2grupo01.services.implementation;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaPeriodoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Administrador;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cocinero;
@@ -19,6 +23,7 @@ import com.unla.tpgrupaloo2hito2grupo01.entities.Pedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Personal;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Responsable;
 import com.unla.tpgrupaloo2hito2grupo01.entities.UnidadVenta;
+import com.unla.tpgrupaloo2hito2grupo01.exceptions.UnidadNoPerteneceFestivalException;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
@@ -92,19 +97,135 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 	}
 
 	@Override
+	public List<ErrorCampoDTO> validarPeriodo(Festival festival, LocalDate desde, LocalDate hasta) {
+		List<ErrorCampoDTO> errores = new ArrayList<>();
+		if (desde == null) {
+			errores.add(new ErrorCampoDTO("desde", "obligatoria", "La fecha inicial es obligatoria."));
+		}
+		if (hasta == null) {
+			errores.add(new ErrorCampoDTO("hasta", "obligatoria", "La fecha final es obligatoria."));
+		}
+		if (festival == null || festival.getFechaInicio() == null || festival.getFechaFin() == null
+				|| festival.getFechaFin().isBefore(festival.getFechaInicio())) {
+			errores.add(new ErrorCampoDTO("desde", "fechasFestivalInvalidas",
+					"El festival no tiene fechas válidas para calcular el período."));
+			return errores;
+		}
+		if (desde == null || hasta == null) {
+			return errores;
+		}
+		if (desde.isAfter(hasta)) {
+			errores.add(new ErrorCampoDTO("hasta", "periodoInvertido",
+					"La fecha inicial no puede ser posterior a la fecha final."));
+			return errores;
+		}
+		if (desde.isBefore(festival.getFechaInicio())) {
+			errores.add(new ErrorCampoDTO("desde", "fueraDelFestival",
+					"La fecha inicial debe ser igual o posterior al inicio del festival."));
+		}
+		if (hasta.isAfter(festival.getFechaFin())) {
+			errores.add(new ErrorCampoDTO("hasta", "fueraDelFestival",
+					"La fecha final debe ser igual o anterior al fin del festival."));
+		}
+		return errores;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<ReporteRentabilidadNetaPeriodoDTO> getReportePeriodo(Festival festival, long unidadVentaId,
+			LocalDate desde, LocalDate hasta) {
+		List<ErrorCampoDTO> errores = validarPeriodo(festival, desde, hasta);
+		if (!errores.isEmpty()) {
+			throw new IllegalArgumentException(errores.get(0).mensaje());
+		}
+
+		Optional<UnidadVenta> unidadEncontrada = unidadVentaRepository.findByIdConFestival(unidadVentaId);
+		if (unidadEncontrada.isEmpty()) {
+			return Optional.empty();
+		}
+
+		UnidadVenta unidad = unidadEncontrada.get();
+		Festival festivalUnidad = unidad.getFestivalAsistio();
+		if (festivalUnidad == null || festivalUnidad.getId() != festival.getId()) {
+			throw new UnidadNoPerteneceFestivalException(
+					"La unidad de venta no pertenece al festival seleccionado");
+		}
+
+		long diasTotalesFestival = ChronoUnit.DAYS.between(festival.getFechaInicio(), festival.getFechaFin()) + 1;
+		long diasPeriodo = ChronoUnit.DAYS.between(desde, hasta) + 1;
+		double proporcionProrrateo = diasPeriodo / (double) diasTotalesFestival;
+
+		List<Pedido> pedidos = pedidoRepository.findByUnidadVentaIdAndFestivalConItemsEntreFechas(
+				unidadVentaId, festival.getId(), desde, hasta);
+		double importePedidos = pedidos.stream().mapToDouble(Pedido::getTotal).sum();
+		double costoPlatos = pedidos.stream()
+				.flatMap(pedido -> pedido.getLstItems().stream())
+				.mapToDouble(this::costoProduccionItem)
+				.sum();
+		double canonFestival = unidad.calcularCanon(festival);
+		double costoCanon = canonFestival * proporcionProrrateo;
+
+		List<String> pendientesSalariales = new ArrayList<>();
+		List<Personal> personalActivo = personalRepository
+				.findByUnidadVentaIdAndEliminadoFalse(unidadVentaId);
+		double sueldosCalculables = calcularSueldosCocineros(personalActivo, festival, pendientesSalariales)
+				+ calcularSueldosCajeros(personalActivo, festival, pendientesSalariales);
+		identificarTratamientoSalarialPendiente(personalActivo, pendientesSalariales);
+
+		boolean completo = pendientesSalariales.isEmpty();
+		Double costoSueldos = completo ? sueldosCalculables * proporcionProrrateo : null;
+		Double rentabilidadNeta = completo
+				? importePedidos - costoPlatos - costoSueldos - costoCanon
+				: null;
+		String estado = completo
+				? "Cálculo completo para el período: no hay costos salariales pendientes de determinar."
+				: String.join(" ", pendientesSalariales);
+
+		return Optional.of(new ReporteRentabilidadNetaPeriodoDTO(unidad.getId(), unidad.getNombreComercial(),
+				festival.getNombre(), desde, hasta, diasPeriodo, diasTotalesFestival, proporcionProrrateo,
+				importePedidos, costoPlatos, costoSueldos, canonFestival, costoCanon, rentabilidadNeta,
+				completo, estado));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<List<ErrorCampoDTO>> validarPeriodoDeUnidadDelResponsable(String username, LocalDate desde,
+			LocalDate hasta) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return Optional.of(validarPeriodo(unidad.get().getFestivalAsistio(), desde, hasta));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<ReporteRentabilidadNetaPeriodoDTO> getReportePeriodoDeUnidadDelResponsable(String username,
+			LocalDate desde, LocalDate hasta) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return getReportePeriodo(unidad.get().getFestivalAsistio(), unidad.get().getId(), desde, hasta);
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public Optional<ReporteRentabilidadNetaDTO> getReporteDeUnidadDelResponsable(String username) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return getReporte(unidad.get().getFestivalAsistio().getId(), unidad.get().getId());
+	}
+
+	private Optional<UnidadVenta> unidadDelResponsable(String username) {
 		Personal personal = personalRepository.findByUserUsernameAndEliminadoFalse(username)
 				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 		if (!(personal instanceof Responsable responsable)) {
 			throw new AccessDeniedException("El usuario autenticado no es Responsable");
 		}
-
-		UnidadVenta unidad = responsable.getUnidadVenta();
-		if (unidad == null || unidad.getFestivalAsistio() == null) {
-			return Optional.empty();
-		}
-		return getReporte(unidad.getFestivalAsistio().getId(), unidad.getId());
+		return Optional.ofNullable(responsable.getUnidadVenta());
 	}
 
 	private double costoProduccionItem(ItemPedido item) {
