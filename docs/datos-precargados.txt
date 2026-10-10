@@ -293,7 +293,8 @@ NOTAS
   - exequiel.paz@epicentro.test es la baja lógica: tiene el usuario deshabilitado y no puede iniciar sesión.
   - Las fechas de ingreso están entre enero y marzo, así que los años de antigüedad dan lo mismo
     tomando como referencia el inicio del festival, su fin u hoy (octubre de 2026).
-  - Rentabilidad neta: los valores son orientativos (no incluyen el sueldo del responsable);
-    el cálculo final depende de cómo se implemente el caso de uso.
+  - Rentabilidad neta: el responsable no cobra sueldo de su unidad (el enunciado solo define el de
+    cocina y cajeros), así que los valores de arriba son los que muestra la app. La ve el Responsable
+    (menú "Rentabilidad neta") y el Administrador (desde las unidades de un festival).
   - La categoría de cocina no es un campo de la entidad Cocinero: se distingue por el plus (150.000 / 100.000 / 50.000).
   - Las contraseñas de prueba están en DataInitializer (PASSWORD_RESPONSABLE / PASSWORD_EMPLEADO).

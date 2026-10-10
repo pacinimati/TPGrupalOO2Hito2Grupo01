@@ -30,15 +30,17 @@
                                 <td th:text="${festival.temporada}"></td>
                                 <td th:text="${#temporals.format(festival.fechaInicio, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${#temporals.format(festival.fechaFin, 'dd/MM/yyyy')}"></td>
-                                <td class="text-right">
-                                    <a th:href="@{/admin/festivales/{id}/unidades(id=${festival.id})}"
-                                       class="btn btn-outline-primary btn-sm">Ver unidades de venta</a>
-                                    <a th:href="@{/admin/festivales/{id}/ranking(id=${festival.id})}"
-                                       class="btn btn-outline-secondary btn-sm">Ranking por recaudación</a>
-                                    <a th:href="@{/admin/festivales/{id}/recaudacion(id=${festival.id})}"
-                                       class="btn btn-outline-secondary btn-sm">Reporte de recaudación</a>
-                                    <a th:href="@{/admin/festivales/{id}/mayores-canon(id=${festival.id})}"
-                                       class="btn btn-outline-secondary btn-sm">Mayores canon</a>
+                                <td>
+                                    <div class="acciones-grid">
+                                        <a th:href="@{/admin/festivales/{id}/unidades(id=${festival.id})}"
+                                           class="btn btn-outline-primary btn-sm">Ver unidades de venta</a>
+                                        <a th:href="@{/admin/festivales/{id}/ranking(id=${festival.id})}"
+                                           class="btn btn-outline-secondary btn-sm">Ranking por recaudación</a>
+                                        <a th:href="@{/admin/festivales/{id}/recaudacion(id=${festival.id})}"
+                                           class="btn btn-outline-secondary btn-sm">Reporte de recaudación</a>
+                                        <a th:href="@{/admin/festivales/{id}/mayores-canon(id=${festival.id})}"
+                                           class="btn btn-outline-secondary btn-sm">Mayores canon</a>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

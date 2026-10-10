@@ -29,6 +29,7 @@ import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IUnidadVentaRepository;
+import com.unla.tpgrupaloo2hito2grupo01.services.implementation.CalculoSalarialService;
 import com.unla.tpgrupaloo2hito2grupo01.services.implementation.RentabilidadNetaService;
 
 class RentabilidadNetaPeriodoServiceTest {
@@ -43,7 +44,7 @@ class RentabilidadNetaPeriodoServiceTest {
 	private final IPedidoRepository pedidoRepository = mock(IPedidoRepository.class);
 	private final IPersonalRepository personalRepository = mock(IPersonalRepository.class);
 	private final RentabilidadNetaService service = new RentabilidadNetaService(festivalRepository,
-			unidadVentaRepository, pedidoRepository, personalRepository);
+			unidadVentaRepository, pedidoRepository, personalRepository, new CalculoSalarialService());
 
 	@Test
 	void validaFechasNulasComoErroresDeCampo() {

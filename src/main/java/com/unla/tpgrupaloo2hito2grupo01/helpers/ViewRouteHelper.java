@@ -39,6 +39,8 @@ public class ViewRouteHelper {
 	//EMPLEADOS (Responsable)
 	public final static String EMPLEADOS_LISTADO = "responsable/empleados";
 	public final static String EMPLEADOS_FORM = "responsable/empleadoForm";
+	public final static String RESPONSABLE_LIQUIDACIONES = "responsable/liquidaciones";
+	public final static String RESPONSABLE_RENTABILIDAD_NETA = "responsable/rentabilidadNeta";
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";

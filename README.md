@@ -23,6 +23,11 @@ CASO DE USO 5: UNIDADES CON MAYOR CANON (ADMIN) - MATIAS PACINI - https://github
 
 CASO DE USO 6: ALTAS, BAJAS Y MODIFICACIONES DE EMPLEADOS (RESPONSABLE) - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/8
 
+CASO DE USO 7: LIQUIDACION DE HABERES - RODRIGO MERCADO - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/11
+
+CASO DE USO 8: REPORTES DE RECAUDACION - RODRIGO MERCADO - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/9
+
+CASO DE USO 9: CALCULO DE RENTABILIDAD NETA - RODRIGO MERCADO - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/10 https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/12
 
 ## Requisitos
 
