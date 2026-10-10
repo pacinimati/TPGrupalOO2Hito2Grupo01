@@ -27,7 +27,7 @@ CASO DE USO 7: LIQUIDACION DE HABERES - RODRIGO MERCADO - https://github.com/pac
 
 CASO DE USO 8: REPORTES DE RECAUDACION - RODRIGO MERCADO - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/9
 
-CASO DE USO 9: CALCULO DE RENTABILIDAD NETA - RODRIGO MERCADO - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/10
+CASO DE USO 9: CALCULO DE RENTABILIDAD NETA - RODRIGO MERCADO - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/10 https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/12
 
 ## Requisitos
 
