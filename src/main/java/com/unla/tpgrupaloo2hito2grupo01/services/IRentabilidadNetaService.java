@@ -18,6 +18,12 @@ public interface IRentabilidadNetaService {
 	Optional<ReporteRentabilidadNetaPeriodoDTO> getReportePeriodo(Festival festival, long unidadVentaId,
 			LocalDate desde, LocalDate hasta);
 
+	Optional<List<ErrorCampoDTO>> validarPeriodoDeUnidadDelResponsable(String username, LocalDate desde,
+			LocalDate hasta);
+
+	Optional<ReporteRentabilidadNetaPeriodoDTO> getReportePeriodoDeUnidadDelResponsable(String username,
+			LocalDate desde, LocalDate hasta);
+
 	// Rentabilidad de la unidad del Responsable que inició sesión ("username") en el festival al que asiste;
 	// vacío si todavía no tiene unidad o la unidad no tiene festival
 	Optional<ReporteRentabilidadNetaDTO> getReporteDeUnidadDelResponsable(String username);

@@ -15,15 +15,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaPeriodoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cocinero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.entities.FoodTruck;
 import com.unla.tpgrupaloo2hito2grupo01.entities.ItemPedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Pedido;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Plato;
+import com.unla.tpgrupaloo2hito2grupo01.entities.Responsable;
 import com.unla.tpgrupaloo2hito2grupo01.exceptions.UnidadNoPerteneceFestivalException;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IFestivalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.repositories.IPedidoRepository;
@@ -239,6 +243,96 @@ class RentabilidadNetaPeriodoServiceTest {
 		assertNull(reporte.costoSueldos());
 		assertNull(reporte.rentabilidadNeta());
 		assertTrue(reporte.estado().contains("categoría conocida"));
+	}
+
+	@Test
+	void responsableObtieneElReporteDeSuUnidadSinRecibirUnIdDeUnidadDelCliente() {
+		Festival festival = festivalValido();
+		FoodTruck unidad = unidad(festival);
+		Responsable responsable = new Responsable();
+		responsable.setUnidadVenta(unidad);
+		LocalDate desde = LocalDate.of(2026, 1, 10);
+		LocalDate hasta = LocalDate.of(2026, 1, 20);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("responsable"))
+				.thenReturn(Optional.of(responsable));
+		when(unidadVentaRepository.findByIdConFestival(UNIDAD_ID)).thenReturn(Optional.of(unidad));
+		when(pedidoRepository.findByUnidadVentaIdAndFestivalConItemsEntreFechas(
+				UNIDAD_ID, FESTIVAL_ID, desde, hasta)).thenReturn(List.of());
+		when(personalRepository.findByUnidadVentaIdAndEliminadoFalse(UNIDAD_ID)).thenReturn(List.of(responsable));
+
+		ReporteRentabilidadNetaPeriodoDTO reporte = service
+				.getReportePeriodoDeUnidadDelResponsable("responsable", desde, hasta).orElseThrow();
+
+		assertEquals(UNIDAD_ID, reporte.unidadVentaId());
+		assertEquals(desde, reporte.desde());
+		assertEquals(hasta, reporte.hasta());
+		assertTrue(reporte.completo());
+		verify(unidadVentaRepository).findByIdConFestival(UNIDAD_ID);
+		verify(pedidoRepository).findByUnidadVentaIdAndFestivalConItemsEntreFechas(
+				UNIDAD_ID, FESTIVAL_ID, desde, hasta);
+	}
+
+	@Test
+	void rechazaUnUsuarioInexistenteDeFormaExplicita() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("inexistente")).thenReturn(Optional.empty());
+
+		assertThrows(UsernameNotFoundException.class,
+				() -> service.getReportePeriodoDeUnidadDelResponsable("inexistente",
+						INICIO_FESTIVAL, FIN_FESTIVAL));
+		verifyNoInteractions(unidadVentaRepository, pedidoRepository);
+	}
+
+	@Test
+	void rechazaUnUsuarioSinPersonalActivoDeFormaExplicita() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("inactivo")).thenReturn(Optional.empty());
+
+		assertThrows(UsernameNotFoundException.class,
+				() -> service.getReportePeriodoDeUnidadDelResponsable("inactivo",
+						INICIO_FESTIVAL, FIN_FESTIVAL));
+		verifyNoInteractions(unidadVentaRepository, pedidoRepository);
+	}
+
+	@Test
+	void deniegaElReporteSiElUsuarioNoEsResponsable() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("cajero"))
+				.thenReturn(Optional.of(new Cajero()));
+
+		assertThrows(AccessDeniedException.class,
+				() -> service.getReportePeriodoDeUnidadDelResponsable("cajero",
+						INICIO_FESTIVAL, FIN_FESTIVAL));
+		verifyNoInteractions(unidadVentaRepository, pedidoRepository);
+	}
+
+	@Test
+	void devuelveVacioSiElResponsableNoTieneUnidadOFestival() {
+		Responsable sinUnidad = new Responsable();
+		Responsable sinFestival = new Responsable();
+		sinFestival.setUnidadVenta(unidad(null));
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("sin-unidad"))
+				.thenReturn(Optional.of(sinUnidad));
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("sin-festival"))
+				.thenReturn(Optional.of(sinFestival));
+
+		assertTrue(service.getReportePeriodoDeUnidadDelResponsable("sin-unidad",
+				INICIO_FESTIVAL, FIN_FESTIVAL).isEmpty());
+		assertTrue(service.getReportePeriodoDeUnidadDelResponsable("sin-festival",
+				INICIO_FESTIVAL, FIN_FESTIVAL).isEmpty());
+		verifyNoInteractions(unidadVentaRepository, pedidoRepository);
+	}
+
+	@Test
+	void validaFechasDelResponsableAntesDeConsultarPedidosOPersonalDeLaUnidad() {
+		Festival festival = festivalValido();
+		Responsable responsable = new Responsable();
+		responsable.setUnidadVenta(unidad(festival));
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("responsable"))
+				.thenReturn(Optional.of(responsable));
+
+		List<ErrorCampoDTO> errores = service.validarPeriodoDeUnidadDelResponsable(
+				"responsable", LocalDate.of(2026, 1, 20), LocalDate.of(2026, 1, 10)).orElseThrow();
+
+		assertEquals("periodoInvertido", errores.get(0).codigo());
+		verifyNoInteractions(unidadVentaRepository, pedidoRepository);
 	}
 
 	private Festival festivalValido() {

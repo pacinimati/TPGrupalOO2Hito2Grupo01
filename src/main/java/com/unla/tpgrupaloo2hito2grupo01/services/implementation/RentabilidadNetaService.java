@@ -189,18 +189,43 @@ public class RentabilidadNetaService implements IRentabilidadNetaService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public Optional<List<ErrorCampoDTO>> validarPeriodoDeUnidadDelResponsable(String username, LocalDate desde,
+			LocalDate hasta) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return Optional.of(validarPeriodo(unidad.get().getFestivalAsistio(), desde, hasta));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<ReporteRentabilidadNetaPeriodoDTO> getReportePeriodoDeUnidadDelResponsable(String username,
+			LocalDate desde, LocalDate hasta) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return getReportePeriodo(unidad.get().getFestivalAsistio(), unidad.get().getId(), desde, hasta);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public Optional<ReporteRentabilidadNetaDTO> getReporteDeUnidadDelResponsable(String username) {
+		Optional<UnidadVenta> unidad = unidadDelResponsable(username);
+		if (unidad.isEmpty() || unidad.get().getFestivalAsistio() == null) {
+			return Optional.empty();
+		}
+		return getReporte(unidad.get().getFestivalAsistio().getId(), unidad.get().getId());
+	}
+
+	private Optional<UnidadVenta> unidadDelResponsable(String username) {
 		Personal personal = personalRepository.findByUserUsernameAndEliminadoFalse(username)
 				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 		if (!(personal instanceof Responsable responsable)) {
 			throw new AccessDeniedException("El usuario autenticado no es Responsable");
 		}
-
-		UnidadVenta unidad = responsable.getUnidadVenta();
-		if (unidad == null || unidad.getFestivalAsistio() == null) {
-			return Optional.empty();
-		}
-		return getReporte(unidad.getFestivalAsistio().getId(), unidad.getId());
+		return Optional.ofNullable(responsable.getUnidadVenta());
 	}
 
 	private double costoProduccionItem(ItemPedido item) {

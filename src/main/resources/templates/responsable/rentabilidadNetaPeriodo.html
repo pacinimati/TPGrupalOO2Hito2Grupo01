@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <a th:href="@{/responsable/rentabilidad}">&larr; Volver a rentabilidad neta</a>
+            <h2 class="mt-2">Rentabilidad neta por período</h2>
+            <p class="text-muted mb-0" th:if="${unidad != null}">
+                Unidad de venta <strong th:text="${unidad.nombreComercial}"></strong>
+                (<span th:text="${unidad.codigoUnico}"></span>) ·
+                <span th:text="${unidad.festival}"></span>
+                <span th:if="${unidad.fechaInicio != null and unidad.fechaFin != null}">
+                    · <span th:text="${#temporals.format(unidad.fechaInicio, 'dd/MM/yyyy')}"></span>
+                    al <span th:text="${#temporals.format(unidad.fechaFin, 'dd/MM/yyyy')}"></span>
+                </span>
+            </p>
+        </div>
+
+        <div class="card" th:if="${sinUnidadOFestival}">
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${unidad == null}">No tenés una unidad de venta asignada.</p>
+                <p class="text-muted mb-0" th:if="${unidad != null}">
+                    Tu unidad de venta no tiene un festival asociado.
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4" th:if="${unidadConFestival}">
+            <div class="card-header">
+                <h5 class="mb-0">Seleccionar período</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/responsable/rentabilidad/periodo}" th:object="${periodo}"
+                      method="post" novalidate>
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                        <div th:each="error : ${#fields.globalErrors()}" th:text="${error}"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="desde">Desde *</label>
+                            <input type="date" id="desde" th:field="*{desde}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('desde')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{desde}"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="hasta">Hasta *</label>
+                            <input type="date" id="hasta" th:field="*{hasta}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('hasta')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback" th:errors="*{hasta}"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Calcular rentabilidad</button>
+                </form>
+            </div>
+        </div>
+
+        <section th:if="${reporte != null}">
+            <div class="alert alert-warning" role="alert" th:unless="${reporte.completo}">
+                <strong>Reporte incompleto.</strong>
+                <span th:text="${reporte.estado}"></span>
+                No se informa una rentabilidad neta definitiva mientras haya salarios pendientes.
+            </div>
+            <div class="alert alert-success" role="status" th:if="${reporte.completo}"
+                 th:text="${reporte.estado}"></div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Detalle del cálculo</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Período:
+                        <span th:text="${#temporals.format(reporte.desde, 'dd/MM/yyyy')}"></span>
+                        al
+                        <span th:text="${#temporals.format(reporte.hasta, 'dd/MM/yyyy')}"></span>
+                    </p>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-8">Ingresos por pedidos</dt>
+                        <dd class="col-sm-4 text-right"
+                            th:text="${'$ ' + #numbers.formatDecimal(reporte.importePedidos, 1, 'POINT', 2, 'COMMA')}"></dd>
+
+                        <dt class="col-sm-8">Costos de producción (platos)</dt>
+                        <dd class="col-sm-4 text-right"
+                            th:text="${'$ -' + #numbers.formatDecimal(reporte.costoPlatos, 1, 'POINT', 2, 'COMMA')}"></dd>
+
+                        <dt class="col-sm-8">Sueldos calculados</dt>
+                        <dd class="col-sm-4 text-right" th:if="${reporte.costoSueldos != null}"
+                            th:text="${'$ -' + #numbers.formatDecimal(reporte.costoSueldos, 1, 'POINT', 2, 'COMMA')}"></dd>
+                        <dd class="col-sm-4 text-right text-muted" th:unless="${reporte.costoSueldos != null}">
+                            Pendiente de determinar
+                        </dd>
+
+                        <dt class="col-sm-8">Canon descontado</dt>
+                        <dd class="col-sm-4 text-right"
+                            th:text="${'$ -' + #numbers.formatDecimal(reporte.costoCanonProrrateado, 1, 'POINT', 2, 'COMMA')}"></dd>
+                    </dl>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center"
+                         th:if="${reporte.completo and reporte.rentabilidadNeta != null}">
+                        <strong>Rentabilidad neta</strong>
+                        <strong class="h4 mb-0"
+                                th:text="${'$ ' + #numbers.formatDecimal(reporte.rentabilidadNeta, 1, 'POINT', 2, 'COMMA')}"></strong>
+                    </div>
+                    <div class="text-muted" th:if="${!reporte.completo or reporte.rentabilidadNeta == null}">
+                        Rentabilidad neta no disponible para este reporte.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

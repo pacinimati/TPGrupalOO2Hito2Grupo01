@@ -41,6 +41,7 @@ public class ViewRouteHelper {
 	public final static String EMPLEADOS_FORM = "responsable/empleadoForm";
 	public final static String RESPONSABLE_LIQUIDACIONES = "responsable/liquidaciones";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA = "responsable/rentabilidadNeta";
+	public final static String RESPONSABLE_RENTABILIDAD_NETA_PERIODO = "responsable/rentabilidadNetaPeriodo";
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";
