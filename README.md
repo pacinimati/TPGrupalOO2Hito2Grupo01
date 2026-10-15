@@ -105,6 +105,11 @@ Hay que elegir la unidad de venta, y el usuario solo puede cargar pedidos en la 
 La fecha debe estar dentro de las fechas del festival de esa unidad.
 Debe haber al menos un plato con cantidad mayor a 0.
 
+Alejo Almirón:
+Caso de uso 12: cierre de caja diario (Cajero).
+El efectivo contado es obligatorio, no puede ser negativo y admite hasta dos decimales.
+Solo se permite un cierre por unidad y fecha, y únicamente durante las fechas del festival activo.
+
 
 ## EJEMPLO DE DTO DE REPORTE
 1. Unidades con mayor canon (ReporteMayoresCanonDTO):

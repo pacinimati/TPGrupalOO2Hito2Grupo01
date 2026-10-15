@@ -6,12 +6,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-// Expone el usuario autenticado (o null si es anónimo) y si es Administrador a todas las vistas, para el navbar
+import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
+import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
+
+// Expone al navbar la identidad y los roles relevantes para las vistas.
 @ControllerAdvice
 public class GlobalModelAdvice {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_RESPONSABLE = "ROLE_RESPONSABLE";
+	private static final String ROLE_EMPLEADO = "ROLE_EMPLEADO";
+
+	private final IPersonalRepository personalRepository;
+
+	public GlobalModelAdvice(IPersonalRepository personalRepository) {
+		this.personalRepository = personalRepository;
+	}
 
 	@ModelAttribute("username")
 	public String username() {
@@ -31,6 +41,17 @@ public class GlobalModelAdvice {
 	@ModelAttribute("esResponsable")
 	public boolean esResponsable() {
 		return tieneRol(ROLE_RESPONSABLE);
+	}
+
+	@ModelAttribute("esCajero")
+	public boolean esCajero() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !authentication.isAuthenticated() || !tieneRol(ROLE_EMPLEADO)) {
+			return false;
+		}
+		return personalRepository.findByUserUsernameAndEliminadoFalse(authentication.getName())
+				.filter(Cajero.class::isInstance)
+				.isPresent();
 	}
 
 	private boolean tieneRol(String rol) {
