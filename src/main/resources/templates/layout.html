@@ -36,6 +36,9 @@
                     <li class="nav-item" th:if="${esResponsable}">
                         <a class="nav-link" th:href="@{/responsable/rentabilidad}">Rentabilidad neta</a>
                     </li>
+                    <li class="nav-item" th:if="${esEmpleado}">
+                        <a class="nav-link" th:href="@{/empleado/actualidad}">Mi situación actual</a>
+                    </li>
                     <li class="nav-item" th:if="${username != null}">
                         <a class="nav-link" th:href="@{/pedidos/nuevo}">Nuevo pedido</a>
                     </li>

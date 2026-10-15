@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <h2>Mi situación actual</h2>
+            <p class="text-muted mb-0">
+                Información laboral de <strong th:text="${situacion.nombreEmpleado}"></strong>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-body" th:if="${situacion.festivalActivo}">
+                <div class="alert alert-success mb-4">
+                    Tenés que trabajar en un festival activo.
+                </div>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Festival</dt>
+                    <dd class="col-sm-8" th:text="${situacion.nombreFestival}"></dd>
+                    <dt class="col-sm-4">Fechas</dt>
+                    <dd class="col-sm-8">
+                        <span th:text="${#temporals.format(situacion.fechaInicio, 'dd/MM/yyyy')}"></span>
+                        al
+                        <span th:text="${#temporals.format(situacion.fechaFin, 'dd/MM/yyyy')}"></span>
+                    </dd>
+                    <dt class="col-sm-4">Unidad de venta</dt>
+                    <dd class="col-sm-8">
+                        <span th:text="${situacion.nombreUnidad}"></span>
+                        (<span th:text="${situacion.codigoUnico}"></span>)
+                    </dd>
+                </dl>
+            </div>
+            <div class="card-body" th:unless="${situacion.festivalActivo}">
+                <p class="text-muted mb-0">
+                    Actualmente no tenés que trabajar en un festival activo.
+                </p>
+                <p class="text-muted mb-0 mt-2" th:if="${situacion.nombreUnidad != null}">
+                    Tu unidad asignada es
+                    <strong th:text="${situacion.nombreUnidad}"></strong>
+                    (<span th:text="${situacion.codigoUnico}"></span>).
+                    <span th:if="${situacion.nombreFestival != null}">
+                        El festival asociado es <span th:text="${situacion.nombreFestival}"></span>
+                        <span th:if="${situacion.fechaInicio != null and situacion.fechaFin != null}">
+                            , del
+                            <span th:text="${#temporals.format(situacion.fechaInicio, 'dd/MM/yyyy')}"></span>
+                            al
+                            <span th:text="${#temporals.format(situacion.fechaFin, 'dd/MM/yyyy')}"></span>
+                        </span>.
+                    </span>
+                    <span th:if="${situacion.nombreFestival == null}">
+                        No hay un festival asociado a esta unidad.
+                    </span>
+                </p>
+                <p class="text-muted mb-0 mt-2" th:if="${situacion.nombreUnidad == null}">
+                    No tenés una unidad de venta asignada.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

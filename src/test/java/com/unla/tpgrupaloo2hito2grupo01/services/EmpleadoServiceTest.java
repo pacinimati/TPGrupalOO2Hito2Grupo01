@@ -21,12 +21,14 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFiltroDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFormDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.SituacionLaboralActualDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.CategoriaCocina;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cocinero;
@@ -304,6 +306,86 @@ class EmpleadoServiceTest {
 
 		assertTrue(service.filtrar("julieta.paz@mail.com", new EmpleadoFiltroDTO()).isEmpty());
 		assertTrue(service.getUnidadDelResponsable("julieta.paz@mail.com").isEmpty());
+	}
+
+	@Test
+	void informaLaUnidadCuandoElEmpleadoEstaDentroDeLasFechasDelFestival() {
+		LocalDate hoy = LocalDate.now();
+		Festival festival = new Festival();
+		festival.setNombre("Festival activo");
+		festival.setFechaInicio(hoy);
+		festival.setFechaFin(hoy.plusDays(2));
+		unidad.setNombreComercial("Food Truck");
+		unidad.setCodigoUnico("ABC1234567");
+		unidad.setFestivalAsistio(festival);
+		Cajero empleado = new Cajero();
+		empleado.setNombre("Julieta");
+		empleado.setApellido("Paz");
+		empleado.setUnidadVenta(unidad);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("julieta@mail.com"))
+				.thenReturn(Optional.of(empleado));
+
+		SituacionLaboralActualDTO situacion = service.getSituacionLaboralActual("julieta@mail.com");
+
+		assertTrue(situacion.festivalActivo());
+		assertEquals("Festival activo", situacion.nombreFestival());
+		assertEquals(hoy, situacion.fechaInicio());
+		assertEquals("Food Truck", situacion.nombreUnidad());
+		assertEquals("ABC1234567", situacion.codigoUnico());
+	}
+
+	@Test
+	void consideraActivoElFestivalHastaElUltimoDiaInclusive() {
+		LocalDate hoy = LocalDate.now();
+		Festival festival = new Festival();
+		festival.setFechaInicio(hoy.minusDays(2));
+		festival.setFechaFin(hoy);
+		unidad.setFestivalAsistio(festival);
+		Cocinero empleado = new Cocinero();
+		empleado.setUnidadVenta(unidad);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("cocinero@mail.com"))
+				.thenReturn(Optional.of(empleado));
+
+		assertTrue(service.getSituacionLaboralActual("cocinero@mail.com").festivalActivo());
+	}
+
+	@Test
+	void informaQueNoHayFestivalActivoSiElFestivalYaFinalizo() {
+		Festival festival = new Festival();
+		festival.setNombre("Festival finalizado");
+		festival.setFechaInicio(LocalDate.now().minusDays(5));
+		festival.setFechaFin(LocalDate.now().minusDays(1));
+		unidad.setFestivalAsistio(festival);
+		Cocinero empleado = new Cocinero();
+		empleado.setUnidadVenta(unidad);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("cocinero@mail.com"))
+				.thenReturn(Optional.of(empleado));
+
+		SituacionLaboralActualDTO situacion = service.getSituacionLaboralActual("cocinero@mail.com");
+
+		assertFalse(situacion.festivalActivo());
+		assertEquals("Festival finalizado", situacion.nombreFestival());
+	}
+
+	@Test
+	void noInformaFestivalActivoSiFaltanFechas() {
+		Festival festival = new Festival();
+		festival.setNombre("Festival sin fechas");
+		unidad.setFestivalAsistio(festival);
+		Cocinero empleado = new Cocinero();
+		empleado.setUnidadVenta(unidad);
+		when(personalRepository.findByUserUsernameAndEliminadoFalse("cocinero@mail.com"))
+				.thenReturn(Optional.of(empleado));
+
+		assertFalse(service.getSituacionLaboralActual("cocinero@mail.com").festivalActivo());
+	}
+
+	@Test
+	void rechazaLaConsultaDeUnUsuarioQueNoEsEmpleado() {
+		when(personalRepository.findByUserUsernameAndEliminadoFalse(RESPONSABLE))
+				.thenReturn(Optional.of(new Responsable()));
+
+		assertThrows(AccessDeniedException.class, () -> service.getSituacionLaboralActual(RESPONSABLE));
 	}
 
 	private Cajero cajeroDeLaUnidad(boolean eliminado) {
