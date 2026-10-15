@@ -42,6 +42,7 @@ public class ViewRouteHelper {
 	public final static String RESPONSABLE_LIQUIDACIONES = "responsable/liquidaciones";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA = "responsable/rentabilidadNeta";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA_PERIODO = "responsable/rentabilidadNetaPeriodo";
+	public final static String EMPLEADO_CIERRE_CAJA = "empleado/cierreCaja";
 
 	//EMPLEADOS (Empleado)
 	public final static String EMPLEADO_ACTUALIDAD = "empleado/actualidad";
@@ -51,6 +52,7 @@ public class ViewRouteHelper {
 	public final static String ADMIN_ROOT = "/admin/festivales";
 	public final static String PEDIDO_ROOT = "/pedidos/nuevo";
 	public final static String EMPLEADOS_ROOT = "/responsable/empleados";
+	public final static String CIERRE_CAJA_ROOT = "/empleado/caja";
 	public final static String EMPLEADO_ACTUALIDAD_ROOT = "/empleado/actualidad";
 	public final static String DEGREE_ROOT = "/degrees/";
 	public final static String PERSON_ROOT = "/person";

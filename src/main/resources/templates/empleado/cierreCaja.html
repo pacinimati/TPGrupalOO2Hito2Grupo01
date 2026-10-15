@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <h2>Cierre de caja</h2>
+            <p class="text-muted mb-0">
+                Fecha: <strong th:text="${#temporals.format(estado.fecha, 'dd/MM/yyyy')}"></strong>
+                <span th:if="${estado.nombreUnidad != null}">
+                    · Unidad: <strong th:text="${estado.nombreUnidad}"></strong>
+                    (<span th:text="${estado.codigoUnico}"></span>)
+                </span>
+                <span th:if="${estado.nombreFestival != null}">
+                    · Festival: <strong th:text="${estado.nombreFestival}"></strong>
+                </span>
+            </p>
+        </div>
+
+        <div class="alert alert-success" th:if="${cierreRegistrado}">
+            El cierre de caja se registró correctamente.
+        </div>
+
+        <div class="alert" th:classappend="${estado.cierre != null} ? 'alert-info' : (${estado.festivalActivo} ? 'alert-success' : 'alert-warning')">
+            <span th:text="${estado.mensaje}"></span>
+        </div>
+
+        <div class="card mb-4" th:if="${estado.festivalActivo or estado.cierre != null}">
+            <div class="card-header"><h5 class="mb-0">Resumen de la jornada</h5></div>
+            <div class="card-body">
+                <p class="mb-0">Recaudación registrada en pedidos:
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(estado.recaudacionPedidos, 1, 'POINT', 2, 'COMMA')}"></strong>
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4" th:if="${estado.cierre != null}">
+            <div class="card-header"><h5 class="mb-0">Caja cerrada</h5></div>
+            <div class="card-body">
+                <p>Cajero: <strong th:text="${estado.cierre.nombreCajero}"></strong></p>
+                <p>Efectivo contado:
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(estado.cierre.montoDeclarado, 1, 'POINT', 2, 'COMMA')}"></strong>
+                </p>
+                <p>Diferencia (efectivo contado − pedidos):
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(estado.cierre.diferencia, 1, 'POINT', 2, 'COMMA')}"></strong>
+                </p>
+                <p class="mb-0" th:if="${estado.cierre.fechaCierre != null}">
+                    Registrado el <span th:text="${#temporals.format(estado.cierre.fechaCierre, 'dd/MM/yyyy HH:mm')}"></span>.
+                </p>
+            </div>
+        </div>
+
+        <div class="card" th:if="${estado.festivalActivo and estado.cierre == null}">
+            <div class="card-header"><h5 class="mb-0">Registrar cierre diario</h5></div>
+            <div class="card-body">
+                <form th:action="@{/empleado/caja}" th:object="${form}" method="post" novalidate>
+                    <div class="form-group">
+                        <label for="montoDeclarado">Efectivo contado al finalizar el día *</label>
+                        <input type="number" id="montoDeclarado" th:field="*{montoDeclarado}"
+                               min="0" step="0.01" class="form-control"
+                               th:classappend="${#fields.hasErrors('montoDeclarado')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback" th:errors="*{montoDeclarado}"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cerrar caja</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>

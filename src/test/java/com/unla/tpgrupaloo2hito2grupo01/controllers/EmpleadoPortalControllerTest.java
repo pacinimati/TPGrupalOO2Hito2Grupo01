@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.unla.tpgrupaloo2hito2grupo01.configuration.SecurityConfiguration;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.SituacionLaboralActualDTO;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
+import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.services.IEmpleadoService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IUserService;
 
@@ -35,6 +36,9 @@ class EmpleadoPortalControllerTest {
 
 	@MockBean
 	private IUserService userService;
+
+	@MockBean
+	private IPersonalRepository personalRepository;
 
 	@Test
 	@WithMockUser(username = "empleado@epicentro.test", roles = "EMPLEADO")

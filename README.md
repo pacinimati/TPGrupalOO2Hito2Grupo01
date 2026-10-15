@@ -33,6 +33,8 @@ CASO DE USO 10: CALCULO DE RENTABILIDAD NETA POR FECHAS - RODRIGO MERCADO https:
 
 CASO DE USO 11: CONSULTA DE FESTIVAL ACTIVO Y UNIDAD DE TRABAJO (EMPLEADO) - ALEJO ALMIRON https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/15
 
+CASO DE USO 12: CIERRE DE CAJA DIARIO (CAJERO) - ALEJO ALMIRON - rama `CU-Cajero-Cierre-Caja`
+
 ## Requisitos
 
 - JDK 17
@@ -106,6 +108,11 @@ Alta de pedido:
 Hay que elegir la unidad de venta, y el usuario solo puede cargar pedidos en la suya (el Administrador, en cualquiera).
 La fecha debe estar dentro de las fechas del festival de esa unidad.
 Debe haber al menos un plato con cantidad mayor a 0.
+
+Alejo Almirón:
+Caso de uso 12: cierre de caja diario (Cajero).
+El efectivo contado es obligatorio, no puede ser negativo y admite hasta dos decimales.
+Solo se permite un cierre por unidad y fecha, y únicamente durante las fechas del festival activo.
 
 
 ## EJEMPLO DE DTO DE REPORTE

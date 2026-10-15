@@ -31,6 +31,7 @@ import com.unla.tpgrupaloo2hito2grupo01.dtos.ReporteRentabilidadNetaPeriodoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaOpcionDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Festival;
 import com.unla.tpgrupaloo2hito2grupo01.helpers.ViewRouteHelper;
+import com.unla.tpgrupaloo2hito2grupo01.repositories.IPersonalRepository;
 import com.unla.tpgrupaloo2hito2grupo01.services.IEmpleadoService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IFestivalService;
 import com.unla.tpgrupaloo2hito2grupo01.services.IPedidoService;
@@ -67,6 +68,9 @@ class RentabilidadNetaControllerTest {
 
 	@MockBean
 	private IUserService userService;
+
+	@MockBean
+	private IPersonalRepository personalRepository;
 
 	@Test
 	@WithMockUser(username = "responsable", roles = "RESPONSABLE")

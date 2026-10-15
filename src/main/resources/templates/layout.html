@@ -36,6 +36,9 @@
                     <li class="nav-item" th:if="${esResponsable}">
                         <a class="nav-link" th:href="@{/responsable/rentabilidad}">Rentabilidad neta</a>
                     </li>
+                    <li class="nav-item" th:if="${esCajero}">
+                        <a class="nav-link" th:href="@{/empleado/caja}">Cierre de caja</a>
+                    </li>
                     <li class="nav-item" th:if="${esEmpleado}">
                         <a class="nav-link" th:href="@{/empleado/actualidad}">Mi situación actual</a>
                     </li>
