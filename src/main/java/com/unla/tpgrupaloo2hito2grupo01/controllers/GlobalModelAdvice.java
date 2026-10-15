@@ -12,6 +12,7 @@ public class GlobalModelAdvice {
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final String ROLE_RESPONSABLE = "ROLE_RESPONSABLE";
+	private static final String ROLE_EMPLEADO = "ROLE_EMPLEADO";
 
 	@ModelAttribute("username")
 	public String username() {
@@ -31,6 +32,11 @@ public class GlobalModelAdvice {
 	@ModelAttribute("esResponsable")
 	public boolean esResponsable() {
 		return tieneRol(ROLE_RESPONSABLE);
+	}
+
+	@ModelAttribute("esEmpleado")
+	public boolean esEmpleado() {
+		return tieneRol(ROLE_EMPLEADO);
 	}
 
 	private boolean tieneRol(String rol) {
