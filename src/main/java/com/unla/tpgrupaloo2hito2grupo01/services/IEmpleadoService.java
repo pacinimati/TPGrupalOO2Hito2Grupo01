@@ -7,6 +7,7 @@ import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFiltroDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFormDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.SituacionLaboralActualDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaOpcionDTO;
 
 // ABM de los empleados de la unidad de venta del Responsable que inició sesión ("username").
@@ -15,6 +16,9 @@ public interface IEmpleadoService {
 
 	// Unidad asignada al responsable; vacío si todavía no tiene una
 	Optional<UnidadVentaOpcionDTO> getUnidadDelResponsable(String username);
+
+	// Situación laboral del empleado autenticado según las fechas del festival de su unidad
+	SituacionLaboralActualDTO getSituacionLaboralActual(String username);
 
 	// Empleados de la unidad según los filtros (todos opcionales): activos, o dados de baja si filtro.eliminados
 	List<EmpleadoDTO> filtrar(String username, EmpleadoFiltroDTO filtro);

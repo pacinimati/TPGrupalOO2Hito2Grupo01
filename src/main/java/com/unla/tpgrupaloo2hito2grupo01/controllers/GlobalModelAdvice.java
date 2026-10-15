@@ -54,6 +54,11 @@ public class GlobalModelAdvice {
 				.isPresent();
 	}
 
+	@ModelAttribute("esEmpleado")
+	public boolean esEmpleado() {
+		return tieneRol(ROLE_EMPLEADO);
+	}
+
 	private boolean tieneRol(String rol) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return authentication != null && authentication.getAuthorities().stream()

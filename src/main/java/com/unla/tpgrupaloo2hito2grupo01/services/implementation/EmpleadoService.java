@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFiltroDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.EmpleadoFormDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.ErrorCampoDTO;
+import com.unla.tpgrupaloo2hito2grupo01.dtos.SituacionLaboralActualDTO;
 import com.unla.tpgrupaloo2hito2grupo01.dtos.UnidadVentaOpcionDTO;
 import com.unla.tpgrupaloo2hito2grupo01.entities.Cajero;
 import com.unla.tpgrupaloo2hito2grupo01.entities.CategoriaCocina;
@@ -69,6 +72,34 @@ public class EmpleadoService implements IEmpleadoService {
 		return unidadDe(username)
 				.flatMap(unidad -> unidadVentaRepository.findByIdConFestival(unidad.getId()))
 				.map(this::toOpcionDTO);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public SituacionLaboralActualDTO getSituacionLaboralActual(String username) {
+		Personal empleado = personalRepository.findByUserUsernameAndEliminadoFalse(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+		if (!(empleado instanceof Cocinero || empleado instanceof Cajero)) {
+			throw new AccessDeniedException("El usuario autenticado no es un Empleado");
+		}
+
+		UnidadVenta unidad = empleado.getUnidadVenta();
+		Festival festival = unidad == null ? null : unidad.getFestivalAsistio();
+		LocalDate hoy = LocalDate.now();
+		boolean festivalActivo = festival != null
+				&& festival.getFechaInicio() != null
+				&& festival.getFechaFin() != null
+				&& !hoy.isBefore(festival.getFechaInicio())
+				&& !hoy.isAfter(festival.getFechaFin());
+
+		return new SituacionLaboralActualDTO(
+				empleado.getNombre() + " " + empleado.getApellido(),
+				festivalActivo,
+				festival == null ? null : festival.getNombre(),
+				festival == null ? null : festival.getFechaInicio(),
+				festival == null ? null : festival.getFechaFin(),
+				unidad == null ? null : unidad.getNombreComercial(),
+				unidad == null ? null : unidad.getCodigoUnico());
 	}
 
 	@Override
