@@ -37,6 +37,8 @@ CASO DE USO 12: CIERRE DE CAJA DIARIO (CAJERO) - ALEJO ALMIRON https://github.co
 
 CASO DE USO 13: PLATO ESTRELLA (RESPONSABLE) - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/17
 
+CASO DE USO 14: HISTORIAL LABORAL + RECIBO DE SUELDO - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/18
+
 ## Requisitos
 
 - JDK 17
