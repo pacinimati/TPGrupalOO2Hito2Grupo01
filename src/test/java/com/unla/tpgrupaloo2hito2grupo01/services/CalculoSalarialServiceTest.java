@@ -43,6 +43,10 @@ class CalculoSalarialServiceTest {
 
 		assertTrue(resultado.esCalculable());
 		assertEquals(225_000, resultado.sueldo(), 0.001);
+		assertEquals(38, resultado.detalle().diasFestival());
+		assertEquals(1.5, resultado.detalle().porcentaje(), 0.001);
+		assertEquals(ConstantesSalariales.SUELDO_BASE, resultado.detalle().sueldoBase(), 0.001);
+		assertEquals(CategoriaCocina.LAVAPLATOS.getPlus(), resultado.detalle().adicional(), 0.001);
 	}
 
 	@Test

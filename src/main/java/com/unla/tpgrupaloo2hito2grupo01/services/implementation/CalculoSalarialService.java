@@ -41,10 +41,8 @@ public class CalculoSalarialService implements ICalculoSalarialService {
 					"No se puede calcular el sueldo de cocina: el plus no corresponde a una categoría conocida.");
 		}
 
-		double factor = (diasDuracion.getAsLong() / ConstantesSalariales.DIAS_POR_TRAMO + 1)
-				* ConstantesSalariales.FACTOR_SUELDO;
-		double sueldo = factor * (ConstantesSalariales.SUELDO_BASE + categoria.get().getPlus());
-		return new Resultado(sueldo, null);
+		return resultado(diasDuracion.getAsLong(), "Plus por categoría (" + categoria.get().getEtiqueta() + ")",
+				categoria.get().getPlus());
 	}
 
 	private Resultado calcularSueldoCajero(Cajero cajero, Festival festival) {
@@ -64,11 +62,17 @@ public class CalculoSalarialService implements ICalculoSalarialService {
 		}
 
 		int aniosAntiguedad = Period.between(cajero.getFechaIngreso(), festival.getFechaFin()).getYears();
-		double factor = (diasDuracion.getAsLong() / ConstantesSalariales.DIAS_POR_TRAMO + 1)
-				* ConstantesSalariales.FACTOR_SUELDO;
-		double sueldoBaseMasAntiguedad = ConstantesSalariales.SUELDO_BASE
-				+ aniosAntiguedad * ConstantesSalariales.ANTIGUEDAD_POR_ANIO;
-		return new Resultado(factor * sueldoBaseMasAntiguedad, null);
+		return resultado(diasDuracion.getAsLong(),
+				"Antigüedad (" + aniosAntiguedad + (aniosAntiguedad == 1 ? " año)" : " años)"),
+				aniosAntiguedad * ConstantesSalariales.ANTIGUEDAD_POR_ANIO);
+	}
+
+	// (int(díasFestival / 15) + 1) * 50% sobre (sueldo base + adicional del rol)
+	private Resultado resultado(long diasFestival, String conceptoAdicional, double adicional) {
+		double porcentaje = (diasFestival / ConstantesSalariales.DIAS_POR_TRAMO + 1) * ConstantesSalariales.FACTOR_SUELDO;
+		double sueldo = porcentaje * (ConstantesSalariales.SUELDO_BASE + adicional);
+		return new Resultado(sueldo, null, new Detalle(diasFestival, porcentaje, ConstantesSalariales.SUELDO_BASE,
+				conceptoAdicional, adicional));
 	}
 
 	// Se cuentan ambos días de calendario que delimitan el festival.
