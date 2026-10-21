@@ -42,6 +42,7 @@ public class ViewRouteHelper {
 	public final static String RESPONSABLE_LIQUIDACIONES = "responsable/liquidaciones";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA = "responsable/rentabilidadNeta";
 	public final static String RESPONSABLE_RENTABILIDAD_NETA_PERIODO = "responsable/rentabilidadNetaPeriodo";
+	public final static String RESPONSABLE_PLATO_ESTRELLA = "responsable/platoEstrella";
 	public final static String EMPLEADO_CIERRE_CAJA = "empleado/cierreCaja";
 
 	//EMPLEADOS (Empleado)
