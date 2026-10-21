@@ -47,6 +47,7 @@ public class ViewRouteHelper {
 
 	//EMPLEADOS (Empleado)
 	public final static String EMPLEADO_ACTUALIDAD = "empleado/actualidad";
+	public final static String EMPLEADO_HISTORIAL = "empleado/historial";
 
 	/**** Redirects ****/
 	public final static String ROUTE = "/index";

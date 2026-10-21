@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+    <nav th:replace="~{layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="page-header">
+            <h2>Mis festivales y sueldos</h2>
+            <p class="text-muted mb-0">
+                Festivales y unidades de venta en las que trabajaste, con el sueldo de cada festival.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p class="text-muted mb-0" th:if="${historial.isEmpty()}">
+                    Todavía no trabajaste en ningún festival.
+                </p>
+
+                <div class="table-responsive" th:unless="${historial.isEmpty()}">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Festival</th>
+                                <th>Fechas</th>
+                                <th>Unidad de venta</th>
+                                <th>Rol</th>
+                                <th>Sueldo</th>
+                                <th>Recibo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${historial}">
+                                <td>
+                                    <span th:text="${item.nombreFestival}"></span>
+                                    <small class="text-muted d-block" th:text="${item.temporada}"></small>
+                                </td>
+                                <td>
+                                    <span th:if="${item.fechaInicio != null and item.fechaFin != null}">
+                                        <span th:text="${#temporals.format(item.fechaInicio, 'dd/MM/yyyy')}"></span>
+                                        al
+                                        <span th:text="${#temporals.format(item.fechaFin, 'dd/MM/yyyy')}"></span>
+                                    </span>
+                                    <small class="d-block"
+                                           th:classappend="${item.estadoFestival == 'En curso'} ? 'text-success' : 'text-muted'"
+                                           th:text="${item.estadoFestival}"></small>
+                                </td>
+                                <td>
+                                    <span th:text="${item.nombreUnidad}"></span>
+                                    <small class="text-muted d-block"
+                                           th:text="${item.tipoUnidad + ' · ' + item.codigoUnico}"></small>
+                                </td>
+                                <td th:text="${item.rol}"></td>
+                                <td th:if="${item.sueldo != null}"
+                                    th:text="${'$' + #numbers.formatDecimal(item.sueldo, 1, 'POINT', 2, 'COMMA')}"></td>
+                                <td th:unless="${item.sueldo != null}">
+                                    <span class="text-muted">No disponible</span>
+                                    <small class="text-muted d-block" th:text="${item.motivoNoCalculable}"></small>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary" th:if="${item.sueldo != null}"
+                                       th:href="@{/empleado/historial/{id}/recibo(id=${item.festivalId})}">
+                                        Descargar PDF
+                                    </a>
+                                    <span class="text-muted" th:unless="${item.sueldo != null}">-</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+    <div th:replace="~{layout :: scripts}"></div>
+</body>
+</html>
