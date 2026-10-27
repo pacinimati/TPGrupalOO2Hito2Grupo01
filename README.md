@@ -6,7 +6,6 @@ Número de grupo:
 -Matias Pacini - pacinimati
 -Alejo Almirón - alejoalmiron
 -Rodrigo Mercado - RodriMercado
--Rodrigo Fernandez - Roi-123
 
 ## CASOS DE USO
 CARGA DE DATOS - MATIAS PACINI: https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/7
