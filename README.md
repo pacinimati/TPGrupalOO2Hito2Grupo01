@@ -38,6 +38,13 @@ CASO DE USO 13: PLATO ESTRELLA (RESPONSABLE) - MATIAS PACINI https://github.com/
 
 CASO DE USO 14: HISTORIAL LABORAL + RECIBO DE SUELDO - MATIAS PACINI https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/18
 
+## API REST (HITO 3)
+
+Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swagger-ui.html (no requiere login).
+
+### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/19
+
+
 ## Requisitos
 
 - JDK 17
@@ -131,8 +138,3 @@ Solo se permite un cierre por unidad y fecha, y únicamente durante las fechas d
 
    Los DTOs de reporte no se guardan en la base de datos: solo llevan los datos que se muestran en pantalla, ya calculados por el service.
 
-## API REST (HITO 3)
-
-Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swagger-ui.html (no requiere login).
-
-### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/19
