@@ -24,6 +24,17 @@ spring:
           starttls:
             enable: true
 
+# Swagger / OpenAPI (Hito 3): solo documenta los endpoints REST de /api/**
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+    try-it-out-enabled: true
+  paths-to-match: /api/**
+
 app:
   admin:
     username: ${ADMIN_USERNAME:admin}

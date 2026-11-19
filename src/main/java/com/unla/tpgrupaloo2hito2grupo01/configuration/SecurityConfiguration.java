@@ -35,6 +35,8 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(auth -> {
 					auth.requestMatchers("/css/*", "/imgs/*", "/js/*", "/vendor/bootstrap/css/*",
 							"/vendor/jquery/*", "/vendor/bootstrap/js/*", "/api/v1/**").permitAll();
+					// Swagger UI y especificación OpenAPI (Hito 3)
+					auth.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
 					// Páginas públicas: inicio con festivales y registro de unidad de venta
 					auth.requestMatchers("/", "/index", "/registro/**", "/error").permitAll();
 					auth.requestMatchers("/admin/**").hasRole("ADMIN");
