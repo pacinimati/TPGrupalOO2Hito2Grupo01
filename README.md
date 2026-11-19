@@ -135,4 +135,4 @@ Solo se permite un cierre por unidad y fecha, y únicamente durante las fechas d
 
 Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swagger-ui.html (no requiere login).
 
-### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/1
+### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/19
