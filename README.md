@@ -130,3 +130,9 @@ Solo se permite un cierre por unidad y fecha, y únicamente durante las fechas d
 3. El responsable se muestra como texto (nombre y apellido), no como la entidad completa.
 
    Los DTOs de reporte no se guardan en la base de datos: solo llevan los datos que se muestran en pantalla, ya calculados por el service.
+
+## API REST (HITO 3)
+
+Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swagger-ui.html (no requiere login).
+
+### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/1
