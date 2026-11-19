@@ -105,15 +105,19 @@ public class EmpleadoService implements IEmpleadoService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<EmpleadoDTO> filtrar(String username, EmpleadoFiltroDTO filtro) {
-		Optional<UnidadVenta> unidad = unidadDe(username);
-		if (unidad.isEmpty()) {
-			return List.of();
-		}
-		return personalRepository.filtrarEmpleados(unidad.get().getId(), filtro.isEliminados(),
-				textoOVacio(filtro.getNombre()), textoOVacio(filtro.getApellido()), filtro.getDni()).stream()
-				.filter(empleado -> filtro.getTipo() == null || tipoDe(empleado) == filtro.getTipo())
-				.map(this::toDTO)
-				.toList();
+		return unidadDe(username).map(unidad -> filtrarEnUnidad(unidad.getId(), filtro)).orElse(List.of());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<UnidadVentaOpcionDTO> getUnidad(long unidadVentaId) {
+		return unidadVentaRepository.findByIdConFestival(unidadVentaId).map(this::toOpcionDTO);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<EmpleadoDTO> filtrarPorUnidad(long unidadVentaId, EmpleadoFiltroDTO filtro) {
+		return filtrarEnUnidad(unidadVentaId, filtro);
 	}
 
 	@Override
@@ -125,10 +129,21 @@ public class EmpleadoService implements IEmpleadoService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<ErrorCampoDTO> validarReglasDeNegocio(EmpleadoFormDTO dto, String username) {
-		List<ErrorCampoDTO> errores = new ArrayList<>();
-		Optional<UnidadVenta> unidad = unidadDe(username);
 		boolean esAlta = dto.getId() == null;
 		Optional<Personal> existente = esAlta ? Optional.empty() : buscarEmpleado(username, dto.getId());
+		return validar(dto, unidadDe(username), existente, esAlta);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ErrorCampoDTO> validarAltaEnUnidad(EmpleadoFormDTO dto, long unidadVentaId) {
+		return validar(dto, unidadVentaRepository.findById(unidadVentaId), Optional.empty(), true);
+	}
+
+	// Reglas de negocio comunes al alta (existente vacío) y a la modificación de un empleado de la unidad
+	private List<ErrorCampoDTO> validar(EmpleadoFormDTO dto, Optional<UnidadVenta> unidad, Optional<Personal> existente,
+			boolean esAlta) {
+		List<ErrorCampoDTO> errores = new ArrayList<>();
 		// Al modificar, el tipo es el que ya tiene el empleado (no cambia)
 		TipoEmpleado tipo = existente.map(this::tipoDe).orElse(dto.getTipo());
 
@@ -161,6 +176,19 @@ public class EmpleadoService implements IEmpleadoService {
 	public void altaEmpleado(EmpleadoFormDTO dto, String username) {
 		UnidadVenta unidad = unidadDe(username)
 				.orElseThrow(() -> new IllegalStateException("El responsable no tiene una unidad de venta asignada"));
+		crearEmpleado(dto, unidad);
+	}
+
+	@Override
+	@Transactional
+	public EmpleadoDTO altaEmpleadoEnUnidad(EmpleadoFormDTO dto, long unidadVentaId) {
+		UnidadVenta unidad = unidadVentaRepository.findById(unidadVentaId)
+				.orElseThrow(() -> new IllegalArgumentException("No existe la unidad de venta " + unidadVentaId));
+		return toDTO(crearEmpleado(dto, unidad));
+	}
+
+	// Crea el usuario (rol EMPLEADO, contraseña aleatoria) y el empleado en la unidad, y le manda sus credenciales
+	private Personal crearEmpleado(EmpleadoFormDTO dto, UnidadVenta unidad) {
 		String email = normalizarEmail(dto.getEmail());
 		String contrasenia = generarContrasenia();
 
@@ -180,6 +208,7 @@ public class EmpleadoService implements IEmpleadoService {
 
 		// Si el mail falla se revierte todo: un empleado que no recibe su contraseña no puede ingresar
 		mailService.enviarCredenciales(email, empleado.getNombre(), contrasenia);
+		return empleado;
 	}
 
 	@Override
@@ -233,6 +262,15 @@ public class EmpleadoService implements IEmpleadoService {
 		return personalRepository.findByUserUsernameAndEliminadoFalse(username)
 				.filter(personal -> personal instanceof Responsable)
 				.map(Personal::getUnidadVenta);
+	}
+
+	// Empleados de la unidad según los filtros; los vacíos no filtran (el tipo se filtra sobre el resultado)
+	private List<EmpleadoDTO> filtrarEnUnidad(long unidadVentaId, EmpleadoFiltroDTO filtro) {
+		return personalRepository.filtrarEmpleados(unidadVentaId, filtro.isEliminados(),
+				textoOVacio(filtro.getNombre()), textoOVacio(filtro.getApellido()), filtro.getDni()).stream()
+				.filter(empleado -> filtro.getTipo() == null || tipoDe(empleado) == filtro.getTipo())
+				.map(this::toDTO)
+				.toList();
 	}
 
 	// Un responsable solo alcanza a los empleados de su unidad

@@ -44,4 +44,19 @@ public interface IEmpleadoService {
 	// Alta de un empleado eliminado lógicamente: lo reactiva, le genera una contraseña nueva y se la envía por mail
 	// (EnvioMailException si falla y no se reactiva). False si no existe, es de otra unidad o no estaba eliminado
 	boolean reactivarEmpleado(long id, String username);
+
+	// --- API REST (Hito 3): la unidad de venta se indica por id, sin un Responsable que haya iniciado sesión ---
+
+	// Unidad de venta por id; vacío si no existe
+	Optional<UnidadVentaOpcionDTO> getUnidad(long unidadVentaId);
+
+	// Empleados de la unidad indicada según los filtros (todos opcionales), igual que filtrar
+	List<EmpleadoDTO> filtrarPorUnidad(long unidadVentaId, EmpleadoFiltroDTO filtro);
+
+	// Reglas de negocio del alta de un empleado en la unidad indicada (las mismas que validarReglasDeNegocio)
+	List<ErrorCampoDTO> validarAltaEnUnidad(EmpleadoFormDTO dto, long unidadVentaId);
+
+	// Alta en la unidad indicada, igual que altaEmpleado (usuario con contraseña aleatoria enviada por mail;
+	// si el mail falla no se guarda nada). Devuelve el empleado creado
+	EmpleadoDTO altaEmpleadoEnUnidad(EmpleadoFormDTO dto, long unidadVentaId);
 }
