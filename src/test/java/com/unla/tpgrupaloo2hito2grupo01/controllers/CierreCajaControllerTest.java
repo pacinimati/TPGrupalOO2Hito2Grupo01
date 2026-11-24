@@ -68,8 +68,8 @@ class CierreCajaControllerTest {
 		when(cierreCajaService.validarCierre(any(), eq("cajero")))
 				.thenReturn(List.of());
 		when(cierreCajaService.cerrarCaja(any(), eq("cajero")))
-				.thenReturn(new CierreCajaDTO(1, LocalDate.now(), "Ana Paz", "La Esquina", "FT12345678",
-						new BigDecimal("120.00"), new BigDecimal("120.00"), BigDecimal.ZERO, null));
+				.thenReturn(new CierreCajaDTO(1, LocalDate.now(), 3, "Ana Paz", 12, "La Esquina", "FT12345678",
+						"Festival actual", new BigDecimal("120.00"), new BigDecimal("120.00"), BigDecimal.ZERO, null));
 
 		mockMvc.perform(post("/empleado/caja").param("montoDeclarado", "120.00"))
 				.andExpect(status().is3xxRedirection());

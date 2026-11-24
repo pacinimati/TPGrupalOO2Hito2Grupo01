@@ -44,6 +44,15 @@ Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swag
 
 ### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/19
 
+### CIERRES DE CAJA - ALEJO ALMIRON - (link al PR)
+
+Controlador `CierreCajaRestController` (`/api/v1/cierres-caja`). Reutiliza la lógica del cierre de caja diario (CU12): la recaudación se calcula con los pedidos de la unidad en esa jornada y la diferencia es efectivo declarado − recaudación.
+
+- **GET `/api/v1/cierres-caja`**: busca cierres de caja. Filtros opcionales y combinables: `festivalId`, `unidadVentaId`, `cajeroId`, `fechaDesde`, `fechaHasta` (aaaa-mm-dd, inclusivos) y `conDiferencia` (`true`: solo los que no cuadran; `false`: solo los que cuadran). Responde 200 con la lista, o 400 si el rango de fechas está invertido o una fecha está mal formada.
+- **POST `/api/v1/cierres-caja`**: registra el cierre de una jornada. Body: `{"cajeroId": 22, "fecha": "2026-10-02", "montoDeclarado": 1280000.00}`. Reglas: el cajero tiene que estar activo (si no, 404); la fecha tiene que estar dentro del festival de su unidad y no ser futura; solo se admite un cierre por unidad y fecha; el monto no puede ser negativo y admite hasta dos decimales (si no, 400 con la lista de errores). Responde 201 con el cierre creado.
+
+Datos para probar con la precarga (festival 6 = Epicentro Primavera Gourmet, del 25/09 al 15/11/2026): cajero 22 (Carolina Bravo) y 23 (Federico Luna) de Parrilla Don Raúl (unidad 6); cajero 28 (Santiago Ibarra) de Burger Bros (unidad 7). El 02/10 Parrilla recaudó $1.280.000 y Burger Bros $815.000.
+
 
 ## Requisitos
 
