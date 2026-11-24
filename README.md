@@ -44,7 +44,7 @@ Documentación y prueba de los endpoints con Swagger: http://localhost:8080/swag
 
 ### EMPLEADOS - MATIAS PACINI - https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/19
 
-### CIERRES DE CAJA - ALEJO ALMIRON - (link al PR)
+### CIERRES DE CAJA - ALEJO ALMIRON - ([20](https://github.com/pacinimati/TPGrupalOO2Hito2Grupo01/pull/20))
 
 Controlador `CierreCajaRestController` (`/api/v1/cierres-caja`). Reutiliza la lógica del cierre de caja diario (CU12): la recaudación se calcula con los pedidos de la unidad en esa jornada y la diferencia es efectivo declarado − recaudación.
 
